@@ -1,6 +1,16 @@
-import { Truck, Navigation } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  InfoWindow,
+  useMap,
+} from "@vis.gl/react-google-maps";
+import { Truck, Loader2, AlertTriangle } from "lucide-react";
 import type { DBVehicle } from "@/hooks/useFleetData";
-import { vehicleMapPosition, vehicleUiStatus } from "./VehicleCard";
+import { vehicleUiStatus } from "./VehicleCard";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   vehicles: DBVehicle[];
@@ -8,83 +18,214 @@ interface Props {
   onSelect: (id: string) => void;
 }
 
+const MAP_ID = "truckstrata_fleet_map";
+
+// Center of contiguous US — used as fallback when no vehicles have coordinates.
+const US_CENTER = { lat: 39.5, lng: -98.35 };
+
 export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
+  const keyQuery = useQuery({
+    queryKey: ["maps-config"],
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke<{
+        apiKey: string;
+        error?: string;
+      }>("maps-config", { body: {} });
+      if (error) throw new Error(error.message);
+      if (!data?.apiKey) throw new Error(data?.error ?? "No API key returned");
+      return data.apiKey;
+    },
+  });
+
+  const positioned = useMemo(
+    () =>
+      vehicles.filter(
+        (v) =>
+          typeof v.current_lat === "number" &&
+          typeof v.current_lng === "number",
+      ),
+    [vehicles],
+  );
+
   const liveCount = vehicles.filter((v) => v.status !== "out_of_service").length;
+
+  if (keyQuery.isLoading) {
+    return (
+      <MapShell>
+        <div className="flex h-full w-full items-center justify-center">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      </MapShell>
+    );
+  }
+
+  if (keyQuery.isError || !keyQuery.data) {
+    return (
+      <MapShell>
+        <div className="flex h-full w-full items-center justify-center p-6">
+          <div className="max-w-sm text-center">
+            <AlertTriangle className="mx-auto h-6 w-6 text-warning" />
+            <p className="mt-2 text-sm font-semibold text-foreground">
+              Map unavailable
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {(keyQuery.error as Error)?.message ??
+                "Couldn't load Google Maps API key."}
+            </p>
+          </div>
+        </div>
+      </MapShell>
+    );
+  }
+
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-soft)]">
-      {/* Stylized map background */}
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(circle at 30% 20%, oklch(0.96 0.02 230) 0%, transparent 60%), radial-gradient(circle at 75% 80%, oklch(0.95 0.025 200) 0%, transparent 55%), oklch(0.98 0.005 240)",
-          }}
-        />
-        <svg className="absolute inset-0 h-full w-full opacity-[0.35]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="oklch(0.85 0.01 240)" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-          <path d="M 0 320 Q 300 260 600 340 T 1200 260" stroke="oklch(0.78 0.05 230)" strokeWidth="3" fill="none" strokeLinecap="round" />
-          <path d="M 200 0 Q 260 220 180 420 T 320 700" stroke="oklch(0.82 0.04 220)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-          <path d="M 700 0 Q 660 200 820 380 T 900 720" stroke="oklch(0.82 0.04 220)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-        </svg>
-      </div>
+    <MapShell>
+      <APIProvider apiKey={keyQuery.data}>
+        <Map
+          mapId={MAP_ID}
+          defaultCenter={US_CENTER}
+          defaultZoom={4}
+          gestureHandling="greedy"
+          disableDefaultUI={false}
+          clickableIcons={false}
+          className="h-full w-full"
+        >
+          <FitBounds vehicles={positioned} selectedId={selectedId} />
+          {positioned.map((v) => (
+            <VehicleMarker
+              key={v.id}
+              vehicle={v}
+              selected={v.id === selectedId}
+              onSelect={() => onSelect(v.id)}
+            />
+          ))}
+        </Map>
+      </APIProvider>
 
-      {vehicles.map((v) => {
-        const active = v.id === selectedId;
-        const status = vehicleUiStatus(v);
-        const { x, y } = vehicleMapPosition(v);
-        return (
-          <button
-            key={v.id}
-            type="button"
-            onClick={() => onSelect(v.id)}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${x}%`, top: `${y}%` }}
-          >
-            <div className="relative flex flex-col items-center">
-              {status === "driving" && (
-                <span className="absolute -inset-2 animate-ping rounded-full bg-primary/20" />
-              )}
-              <div
-                className={`relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-background shadow-[var(--shadow-elevated)] transition ${
-                  active
-                    ? "scale-110 bg-[image:var(--gradient-primary)] text-primary-foreground"
-                    : status === "offline"
-                      ? "bg-muted text-muted-foreground"
-                      : "bg-card text-primary hover:scale-105"
-                }`}
-              >
-                <Truck className="h-4 w-4" strokeWidth={2} />
-              </div>
-              {active && (
-                <div className="mt-1.5 whitespace-nowrap rounded-md bg-foreground px-2 py-0.5 text-[10px] font-medium text-background shadow">
-                  {v.truck_number}
-                </div>
-              )}
-            </div>
-          </button>
-        );
-      })}
-
-      <div className="absolute right-4 top-4 flex flex-col gap-1 rounded-xl border border-border/60 bg-card/90 p-1 shadow-[var(--shadow-soft)] backdrop-blur">
-        <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground">+</button>
-        <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground">−</button>
-        <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground">
-          <Navigation className="h-4 w-4" strokeWidth={1.8} />
-        </button>
-      </div>
-
-      <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur">
+      {/* Overlay: live status pill */}
+      <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur">
         <span className="relative inline-flex h-2 w-2 rounded-full bg-success">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
         </span>
         Live · {liveCount} of {vehicles.length} active
       </div>
+    </MapShell>
+  );
+}
+
+function MapShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative h-full min-h-[420px] w-full overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-soft)]">
+      {children}
     </div>
   );
+}
+
+function VehicleMarker({
+  vehicle,
+  selected,
+  onSelect,
+}: {
+  vehicle: DBVehicle;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  const status = vehicleUiStatus(vehicle);
+  const position = {
+    lat: Number(vehicle.current_lat),
+    lng: Number(vehicle.current_lng),
+  };
+
+  const tone =
+    status === "offline"
+      ? "bg-muted text-muted-foreground"
+      : selected
+        ? "bg-[image:var(--gradient-primary)] text-primary-foreground scale-110"
+        : "bg-card text-primary";
+
+  return (
+    <>
+      <AdvancedMarker position={position} onClick={onSelect}>
+        <div className="relative flex flex-col items-center">
+          {status === "driving" && !selected && (
+            <span className="absolute -inset-2 animate-ping rounded-full bg-primary/25" />
+          )}
+          <div
+            className={`relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-background shadow-[var(--shadow-elevated)] transition ${tone}`}
+          >
+            <Truck className="h-4 w-4" strokeWidth={2} />
+          </div>
+        </div>
+      </AdvancedMarker>
+
+      {selected && (
+        <InfoWindow position={position} pixelOffset={[0, -38]} headerDisabled>
+          <div className="min-w-[180px] px-1 py-0.5">
+            <p className="text-sm font-semibold text-foreground">
+              {vehicle.truck_number}
+            </p>
+            {vehicle.current_location_label && (
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {vehicle.current_location_label}
+              </p>
+            )}
+            <div className="mt-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
+              <span className="capitalize">{vehicle.status.replace("_", " ")}</span>
+              {typeof vehicle.fuel_level_pct === "number" && (
+                <>
+                  <span>·</span>
+                  <span>Fuel {vehicle.fuel_level_pct}%</span>
+                </>
+              )}
+            </div>
+          </div>
+        </InfoWindow>
+      )}
+    </>
+  );
+}
+
+/** Auto-fit map to cover all vehicles when the set changes. */
+function FitBounds({
+  vehicles,
+  selectedId,
+}: {
+  vehicles: DBVehicle[];
+  selectedId?: string;
+}) {
+  const map = useMap();
+  const [hasFit, setHasFit] = useState(false);
+
+  // Fit all on first load
+  useEffect(() => {
+    if (!map || hasFit || vehicles.length === 0) return;
+    if (vehicles.length === 1) {
+      map.setCenter({
+        lat: Number(vehicles[0].current_lat),
+        lng: Number(vehicles[0].current_lng),
+      });
+      map.setZoom(8);
+    } else {
+      const bounds = new google.maps.LatLngBounds();
+      vehicles.forEach((v) =>
+        bounds.extend({
+          lat: Number(v.current_lat),
+          lng: Number(v.current_lng),
+        }),
+      );
+      map.fitBounds(bounds, 64);
+    }
+    setHasFit(true);
+  }, [map, vehicles, hasFit]);
+
+  // Pan to selection
+  useEffect(() => {
+    if (!map || !selectedId) return;
+    const v = vehicles.find((x) => x.id === selectedId);
+    if (!v) return;
+    map.panTo({ lat: Number(v.current_lat), lng: Number(v.current_lng) });
+  }, [map, selectedId, vehicles]);
+
+  return null;
 }
