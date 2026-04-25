@@ -139,6 +139,46 @@ export function useAlerts() {
   });
 }
 
+export interface CreateTripInput {
+  reference?: string | null;
+  origin_label: string;
+  origin_lat?: number | null;
+  origin_lng?: number | null;
+  destination_label: string;
+  destination_lat?: number | null;
+  destination_lng?: number | null;
+  vehicle_id?: string | null;
+  driver_id?: string | null;
+  scheduled_pickup_at?: string | null;
+  scheduled_delivery_at?: string | null;
+  notes?: string | null;
+}
+
+export function useCreateTrip() {
+  const qc = useQueryClient();
+  const { data: org } = useOrganization();
+  return useMutation({
+    mutationFn: async (input: CreateTripInput) => {
+      if (!org?.organization_id) throw new Error("No organization yet");
+      const status = input.driver_id && input.vehicle_id ? "assigned" : "planned";
+      const { data, error } = await supabase
+        .from("trips")
+        .insert({
+          ...input,
+          organization_id: org.organization_id,
+          status,
+        })
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data as DBTrip;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["trips"] });
+    },
+  });
+}
+
 /** Seed demo fleet data for the current user's organization. */
 export function useSeedDemoFleet() {
   const qc = useQueryClient();
