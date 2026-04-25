@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Logo } from "./Logo";
 import {
   LayoutGrid,
@@ -11,16 +11,18 @@ import {
   Settings,
   Store,
   LogOut,
+  Route as RouteIcon,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 const nav = [
-  { label: "Overview", icon: LayoutGrid, to: "/dispatch" as const, active: true },
+  { label: "Overview", icon: LayoutGrid, to: "/dispatch" as const },
+  { label: "Trips", icon: RouteIcon, to: "/trips" as const },
   { label: "Live map", icon: Map },
   { label: "Vehicles", icon: Truck },
   { label: "Drivers", icon: Users },
-  { label: "Alerts", icon: Bell, badge: 3 },
+  { label: "Alerts", icon: Bell },
   { label: "Documents", icon: FileText },
   { label: "Copilots", icon: Sparkles },
   { label: "Marketplace", icon: Store },
