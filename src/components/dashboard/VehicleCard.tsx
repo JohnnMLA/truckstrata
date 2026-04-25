@@ -1,29 +1,42 @@
 import { StatusDot, type Status } from "./StatusDot";
 import { Truck } from "lucide-react";
+import type { DBVehicle, DBDriver } from "@/hooks/useFleetData";
 
-export interface Vehicle {
-  id: string;
-  name: string;
-  driver: string;
-  route: string;
-  speed: number;
-  fuel: number;
-  eta: string;
-  status: Status;
-  // position as % of map width/height for the mock map
-  x: number;
-  y: number;
+/** Map DB status to UI status. */
+export function vehicleUiStatus(v: DBVehicle): Status {
+  if (v.status === "out_of_service") return "offline";
+  if (v.status === "maintenance") return "idle";
+  if (v.status === "active") return "driving";
+  return "idle";
 }
 
-export const mockVehicles: Vehicle[] = [
-  { id: "TRK-204", name: "Truck 204", driver: "Marcus Reed", route: "Dallas → Phoenix", speed: 64, fuel: 72, eta: "4h 12m", status: "driving", x: 28, y: 56 },
-  { id: "TRK-118", name: "Truck 118", driver: "Sara Lin", route: "Atlanta → Miami", speed: 0, fuel: 41, eta: "—", status: "break", x: 72, y: 70 },
-  { id: "TRK-091", name: "Truck 091", driver: "Diego Alvarez", route: "Chicago → Denver", speed: 58, fuel: 88, eta: "9h 04m", status: "driving", x: 47, y: 38 },
-  { id: "TRK-307", name: "Truck 307", driver: "Hannah Cole", route: "Seattle → Boise", speed: 0, fuel: 18, eta: "—", status: "idle", x: 14, y: 24 },
-  { id: "TRK-562", name: "Truck 562", driver: "Jamal Rivers", route: "NYC → Boston", speed: 0, fuel: 64, eta: "—", status: "offline", x: 86, y: 28 },
-];
+/** Map a vehicle's lat/lng to an x/y % on the stylized US map. Rough mercator-ish. */
+export function vehicleMapPosition(v: DBVehicle): { x: number; y: number } {
+  // Continental US bounds
+  const minLng = -125;
+  const maxLng = -66;
+  const minLat = 24;
+  const maxLat = 50;
+  const lng = v.current_lng ?? -98;
+  const lat = v.current_lat ?? 39;
+  const x = ((lng - minLng) / (maxLng - minLng)) * 100;
+  const y = (1 - (lat - minLat) / (maxLat - minLat)) * 100;
+  return {
+    x: Math.max(4, Math.min(96, x)),
+    y: Math.max(6, Math.min(94, y)),
+  };
+}
 
-export function VehicleCard({ v, active, onClick }: { v: Vehicle; active?: boolean; onClick?: () => void }) {
+interface Props {
+  vehicle: DBVehicle;
+  driver?: DBDriver;
+  active?: boolean;
+  onClick?: () => void;
+}
+
+export function VehicleCard({ vehicle, driver, active, onClick }: Props) {
+  const status = vehicleUiStatus(vehicle);
+  const fuel = vehicle.fuel_level_pct ?? 0;
   return (
     <button
       type="button"
@@ -38,17 +51,21 @@ export function VehicleCard({ v, active, onClick }: { v: Vehicle; active?: boole
             <Truck className="h-5 w-5" strokeWidth={1.8} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">{v.name}</p>
-            <p className="text-xs text-muted-foreground">{v.driver}</p>
+            <p className="text-sm font-semibold text-foreground">{vehicle.truck_number}</p>
+            <p className="text-xs text-muted-foreground">
+              {driver?.full_name ?? "Unassigned"}
+            </p>
           </div>
         </div>
-        <StatusDot status={v.status} />
+        <StatusDot status={status} />
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">{v.route}</p>
+      <p className="mt-3 truncate text-xs text-muted-foreground">
+        {vehicle.current_location_label ?? `${vehicle.make ?? ""} ${vehicle.model ?? ""}`.trim() || "—"}
+      </p>
       <div className="mt-3 grid grid-cols-3 gap-2 text-[11px]">
-        <Stat label="Speed" value={`${v.speed} mph`} />
-        <Stat label="Fuel" value={`${v.fuel}%`} tone={v.fuel < 25 ? "warn" : undefined} />
-        <Stat label="ETA" value={v.eta} />
+        <Stat label="Fuel" value={`${Math.round(fuel)}%`} tone={fuel < 25 ? "warn" : undefined} />
+        <Stat label="Odo" value={vehicle.odometer_miles ? `${(vehicle.odometer_miles / 1000).toFixed(0)}k` : "—"} />
+        <Stat label="HOS" value={driver?.hos_remaining_minutes ? `${Math.floor(driver.hos_remaining_minutes / 60)}h` : "—"} />
       </div>
     </button>
   );

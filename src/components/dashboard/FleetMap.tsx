@@ -1,16 +1,18 @@
 import { Truck, Navigation } from "lucide-react";
-import type { Vehicle } from "./VehicleCard";
+import type { DBVehicle } from "@/hooks/useFleetData";
+import { vehicleMapPosition, vehicleUiStatus } from "./VehicleCard";
 
 interface Props {
-  vehicles: Vehicle[];
+  vehicles: DBVehicle[];
   selectedId?: string;
   onSelect: (id: string) => void;
 }
 
 export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
+  const liveCount = vehicles.filter((v) => v.status !== "out_of_service").length;
   return (
     <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-soft)]">
-      {/* Stylized "map" background */}
+      {/* Stylized map background */}
       <div className="absolute inset-0">
         <div
           className="absolute inset-0"
@@ -26,33 +28,33 @@ export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
-          {/* fake highways */}
           <path d="M 0 320 Q 300 260 600 340 T 1200 260" stroke="oklch(0.78 0.05 230)" strokeWidth="3" fill="none" strokeLinecap="round" />
           <path d="M 200 0 Q 260 220 180 420 T 320 700" stroke="oklch(0.82 0.04 220)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
           <path d="M 700 0 Q 660 200 820 380 T 900 720" stroke="oklch(0.82 0.04 220)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
         </svg>
       </div>
 
-      {/* Vehicle markers */}
       {vehicles.map((v) => {
         const active = v.id === selectedId;
+        const status = vehicleUiStatus(v);
+        const { x, y } = vehicleMapPosition(v);
         return (
           <button
             key={v.id}
             type="button"
             onClick={() => onSelect(v.id)}
             className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${v.x}%`, top: `${v.y}%` }}
+            style={{ left: `${x}%`, top: `${y}%` }}
           >
             <div className="relative flex flex-col items-center">
-              {v.status === "driving" && (
+              {status === "driving" && (
                 <span className="absolute -inset-2 animate-ping rounded-full bg-primary/20" />
               )}
               <div
                 className={`relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-background shadow-[var(--shadow-elevated)] transition ${
                   active
                     ? "scale-110 bg-[image:var(--gradient-primary)] text-primary-foreground"
-                    : v.status === "offline"
+                    : status === "offline"
                       ? "bg-muted text-muted-foreground"
                       : "bg-card text-primary hover:scale-105"
                 }`}
@@ -61,7 +63,7 @@ export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
               </div>
               {active && (
                 <div className="mt-1.5 whitespace-nowrap rounded-md bg-foreground px-2 py-0.5 text-[10px] font-medium text-background shadow">
-                  {v.name}
+                  {v.truck_number}
                 </div>
               )}
             </div>
@@ -69,7 +71,6 @@ export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
         );
       })}
 
-      {/* Map controls */}
       <div className="absolute right-4 top-4 flex flex-col gap-1 rounded-xl border border-border/60 bg-card/90 p-1 shadow-[var(--shadow-soft)] backdrop-blur">
         <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground">+</button>
         <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground">−</button>
@@ -78,12 +79,11 @@ export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
         </button>
       </div>
 
-      {/* Live indicator */}
       <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur">
         <span className="relative inline-flex h-2 w-2 rounded-full bg-success">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
         </span>
-        Live · {vehicles.filter((v) => v.status !== "offline").length} of {vehicles.length} active
+        Live · {liveCount} of {vehicles.length} active
       </div>
     </div>
   );
