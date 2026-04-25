@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { FleetMap } from "@/components/dashboard/FleetMap";
 import { VehicleCard, mockVehicles } from "@/components/dashboard/VehicleCard";
 import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
 import { Button } from "@/components/ui/button";
-import { Search, Bell, Plus } from "lucide-react";
+import { Search, Bell, Plus, Loader2 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/dispatch")({
   head: () => ({
@@ -21,7 +22,24 @@ export const Route = createFileRoute("/dispatch")({
 });
 
 function DispatchPage() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [selected, setSelected] = useState<string>(mockVehicles[0].id);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate({ to: "/auth" });
+    }
+  }, [loading, user, navigate]);
+
+  if (loading || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   const driving = mockVehicles.filter((v) => v.status === "driving").length;
   const idle = mockVehicles.filter((v) => v.status === "idle").length;
   const offline = mockVehicles.filter((v) => v.status === "offline").length;
