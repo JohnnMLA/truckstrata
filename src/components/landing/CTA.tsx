@@ -1,5 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+
+const socialLinks = [
+  { label: "Facebook", href: "https://facebook.com/truckstrata", Icon: Facebook },
+  { label: "Instagram", href: "https://instagram.com/truckstrata", Icon: Instagram },
+  { label: "X (Twitter)", href: "https://x.com/truckstrata", Icon: Twitter },
+  { label: "LinkedIn", href: "https://linkedin.com/company/truckstrata", Icon: Linkedin },
+];
 
 export function CTA() {
   return (
@@ -23,9 +31,25 @@ export function CTA() {
           </Button>
         </div>
       </div>
-      <p className="mt-10 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} TruckStrata, Inc. · truckstrata.com
-      </p>
+      <div className="mt-12 flex flex-col items-center gap-4">
+        <div className="flex items-center gap-2">
+          {socialLinks.map(({ label, href, Icon }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Follow TruckStrata on ${label}`}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+            >
+              <Icon className="h-4 w-4" />
+            </a>
+          ))}
+        </div>
+        <p className="text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} TruckStrata, Inc. · truckstrata.com
+        </p>
+      </div>
     </section>
   );
 }
