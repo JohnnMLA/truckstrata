@@ -19,12 +19,12 @@ export function MarketingHeader() {
           </a>
         </nav>
         <div className="flex items-center gap-2">
-          <Link to="/dispatch">
+          <Link to="/auth">
             <Button variant="ghost" size="sm">Sign in</Button>
           </Link>
-          <Link to="/dispatch">
+          <Link to="/auth">
             <Button size="sm" className="rounded-full">
-              Open dashboard
+              Get started
             </Button>
           </Link>
         </div>

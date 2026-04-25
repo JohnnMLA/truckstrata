@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Logo } from "./Logo";
 import {
   LayoutGrid,
@@ -10,7 +10,10 @@ import {
   Sparkles,
   Settings,
   Store,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { toast } from "sonner";
 
 const nav = [
   { label: "Overview", icon: LayoutGrid, to: "/dispatch" as const, active: true },
@@ -24,6 +27,27 @@ const nav = [
 ];
 
 export function DashboardSidebar() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const fullName =
+    (user?.user_metadata?.full_name as string | undefined) ??
+    user?.email?.split("@")[0] ??
+    "Account";
+  const initials = fullName
+    .split(" ")
+    .map((p) => p[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  async function handleSignOut() {
+    await signOut();
+    toast.success("Signed out");
+    navigate({ to: "/" });
+  }
+
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-r border-border/60 bg-card/40 p-4 lg:flex">
       <div className="px-2 py-2">
@@ -58,13 +82,34 @@ export function DashboardSidebar() {
           );
         })}
       </nav>
-      <button
-        type="button"
-        className="mt-auto flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-card hover:text-foreground"
-      >
-        <Settings className="h-[18px] w-[18px]" strokeWidth={1.8} />
-        Settings
-      </button>
+
+      <div className="mt-auto space-y-1">
+        <button
+          type="button"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-card hover:text-foreground"
+        >
+          <Settings className="h-[18px] w-[18px]" strokeWidth={1.8} />
+          Settings
+        </button>
+
+        <div className="mt-2 flex items-center gap-3 rounded-xl border border-border/60 bg-card p-2.5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+            {initials || "?"}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-medium text-foreground">{fullName}</p>
+            <p className="truncate text-[11px] text-muted-foreground">{user?.email}</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            aria-label="Sign out"
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-background hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4" strokeWidth={1.8} />
+          </button>
+        </div>
+      </div>
     </aside>
   );
 }
