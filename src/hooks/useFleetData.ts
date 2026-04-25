@@ -247,3 +247,86 @@ export function useSeedDemoFleet() {
     },
   });
 }
+
+/**
+ * Subscribe to live changes on the vehicles table and patch the React Query
+ * cache so any component reading useVehicles() updates without a refetch.
+ */
+export function useRealtimeVehicles() {
+  const qc = useQueryClient();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel("vehicles-stream")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "vehicles" },
+        (payload) => {
+          qc.setQueryData<DBVehicle[]>(["vehicles", user.id], (prev) => {
+            if (!prev) return prev;
+            if (payload.eventType === "DELETE") {
+              const oldId = (payload.old as { id?: string }).id;
+              return prev.filter((v) => v.id !== oldId);
+            }
+            const next = payload.new as DBVehicle;
+            const idx = prev.findIndex((v) => v.id === next.id);
+            if (idx === -1) return [...prev, next];
+            const copy = prev.slice();
+            copy[idx] = { ...copy[idx], ...next };
+            return copy;
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [qc, user]);
+}
+
+/**
+ * Demo helper: nudge each active vehicle's lat/lng by a tiny random offset to
+ * simulate GPS pings. Used to showcase realtime updates without ELD hardware.
+ */
+export function useSimulateVehiclePings() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data: vehicles, error } = await supabase
+        .from("vehicles")
+        .select("id, current_lat, current_lng, status")
+        .neq("status", "out_of_service");
+      if (error) throw error;
+      if (!vehicles?.length) return 0;
+
+      // Move each vehicle by ~0.05° (~3-4 miles) in a random direction
+      const updates = vehicles
+        .filter((v) => v.current_lat !== null && v.current_lng !== null)
+        .map((v) => {
+          const dLat = (Math.random() - 0.5) * 0.1;
+          const dLng = (Math.random() - 0.5) * 0.1;
+          return supabase
+            .from("vehicles")
+            .update({
+              current_lat: Number(v.current_lat) + dLat,
+              current_lng: Number(v.current_lng) + dLng,
+              last_ping_at: new Date().toISOString(),
+            })
+            .eq("id", v.id);
+        });
+
+      const results = await Promise.all(updates);
+      const firstError = results.find((r) => r.error);
+      if (firstError?.error) throw firstError.error;
+      return updates.length;
+    },
+    onSuccess: () => {
+      // Realtime will patch the cache, but invalidate as a safety net.
+      qc.invalidateQueries({ queryKey: ["vehicles"] });
+    },
+  });
+}
