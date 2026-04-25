@@ -7,9 +7,15 @@ import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
 import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
 import { Button } from "@/components/ui/button";
-import { Search, Bell, Plus, Loader2, Sparkles, Truck } from "lucide-react";
+import { Search, Bell, Plus, Loader2, Sparkles, Truck, Radio } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useVehicles, useDrivers, useSeedDemoFleet } from "@/hooks/useFleetData";
+import {
+  useVehicles,
+  useDrivers,
+  useSeedDemoFleet,
+  useRealtimeVehicles,
+  useSimulateVehiclePings,
+} from "@/hooks/useFleetData";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dispatch")({
@@ -32,6 +38,10 @@ function DispatchPage() {
   const { data: vehicles, isLoading: vehiclesLoading } = useVehicles();
   const { data: drivers } = useDrivers();
   const seed = useSeedDemoFleet();
+  const simulate = useSimulateVehiclePings();
+
+  // Subscribe to live vehicle updates (location, status, fuel, etc.)
+  useRealtimeVehicles();
 
   const driversById = useMemo(
     () => Object.fromEntries((drivers ?? []).map((d) => [d.id, d])),
@@ -95,6 +105,29 @@ function DispatchPage() {
             </div>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            {list.length > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                disabled={simulate.isPending}
+                onClick={async () => {
+                  try {
+                    const n = await simulate.mutateAsync();
+                    toast.success(`Pinged ${n} truck${n === 1 ? "" : "s"}`);
+                  } catch (e) {
+                    toast.error(e instanceof Error ? e.message : "Failed to ping");
+                  }
+                }}
+              >
+                {simulate.isPending ? (
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <Radio className="mr-1 h-4 w-4" />
+                )}
+                Simulate pings
+              </Button>
+            )}
             <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition hover:text-foreground">
               <Bell className="h-4 w-4" strokeWidth={1.8} />
             </button>
