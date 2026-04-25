@@ -14,6 +14,7 @@ import {
   useDrivers,
   useSeedDemoFleet,
   useRealtimeVehicles,
+  useRealtimeAlerts,
   useSimulateVehiclePings,
 } from "@/hooks/useFleetData";
 import { toast } from "sonner";
