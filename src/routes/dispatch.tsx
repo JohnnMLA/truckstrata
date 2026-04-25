@@ -14,6 +14,7 @@ import {
   useDrivers,
   useSeedDemoFleet,
   useRealtimeVehicles,
+  useRealtimeAlerts,
   useSimulateVehiclePings,
 } from "@/hooks/useFleetData";
 import { toast } from "sonner";
@@ -40,8 +41,9 @@ function DispatchPage() {
   const seed = useSeedDemoFleet();
   const simulate = useSimulateVehiclePings();
 
-  // Subscribe to live vehicle updates (location, status, fuel, etc.)
+  // Subscribe to live vehicle + alert updates
   useRealtimeVehicles();
+  useRealtimeAlerts();
 
   const driversById = useMemo(
     () => Object.fromEntries((drivers ?? []).map((d) => [d.id, d])),

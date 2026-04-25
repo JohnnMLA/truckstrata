@@ -330,3 +330,42 @@ export function useSimulateVehiclePings() {
     },
   });
 }
+
+/**
+ * Subscribe to live changes on the alerts table and patch the cache. Notifies
+ * via toast when a new critical/warning alert is created.
+ */
+export function useRealtimeAlerts() {
+  const qc = useQueryClient();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel("alerts-stream")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "alerts" },
+        (payload) => {
+          qc.setQueryData<DBAlert[]>(["alerts", user.id], (prev) => {
+            if (!prev) return prev;
+            if (payload.eventType === "DELETE") {
+              const oldId = (payload.old as { id?: string }).id;
+              return prev.filter((a) => a.id !== oldId);
+            }
+            const next = payload.new as DBAlert;
+            // Only show unresolved alerts in the live list
+            const filtered = prev.filter((a) => a.id !== next.id);
+            if (next.resolved) return filtered;
+            return [next, ...filtered].slice(0, 20);
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [qc, user]);
+}

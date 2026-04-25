@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Logo } from "./Logo";
 import {
   LayoutGrid,
@@ -11,16 +11,18 @@ import {
   Settings,
   Store,
   LogOut,
+  Route as RouteIcon,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 const nav = [
-  { label: "Overview", icon: LayoutGrid, to: "/dispatch" as const, active: true },
+  { label: "Overview", icon: LayoutGrid, to: "/dispatch" as const },
+  { label: "Trips", icon: RouteIcon, to: "/trips" as const },
   { label: "Live map", icon: Map },
   { label: "Vehicles", icon: Truck },
   { label: "Drivers", icon: Users },
-  { label: "Alerts", icon: Bell, badge: 3 },
+  { label: "Alerts", icon: Bell },
   { label: "Documents", icon: FileText },
   { label: "Copilots", icon: Sparkles },
   { label: "Marketplace", icon: Store },
@@ -29,6 +31,7 @@ const nav = [
 export function DashboardSidebar() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const fullName =
     (user?.user_metadata?.full_name as string | undefined) ??
@@ -55,23 +58,20 @@ export function DashboardSidebar() {
       </div>
       <nav className="mt-6 flex flex-1 flex-col gap-0.5">
         {nav.map((item) => {
+          const isActive =
+            "to" in item && item.to ? location.pathname === item.to : false;
           const inner = (
             <>
               <item.icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
               <span className="flex-1">{item.label}</span>
-              {item.badge && (
-                <span className="rounded-full bg-destructive px-1.5 py-0.5 text-[10px] font-semibold text-destructive-foreground">
-                  {item.badge}
-                </span>
-              )}
             </>
           );
           const className = `flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition ${
-            item.active
+            isActive
               ? "bg-card text-foreground shadow-[var(--shadow-soft)]"
               : "text-muted-foreground hover:bg-card hover:text-foreground"
           }`;
-          return item.to ? (
+          return "to" in item && item.to ? (
             <Link key={item.label} to={item.to} className={className}>
               {inner}
             </Link>
