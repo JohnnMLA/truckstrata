@@ -132,10 +132,49 @@ function VehicleMarker({
   onSelect: () => void;
 }) {
   const status = vehicleUiStatus(vehicle);
-  const position = {
+  const target = {
     lat: Number(vehicle.current_lat),
     lng: Number(vehicle.current_lng),
   };
+
+  // Tween marker position from previous → new coords for smooth motion.
+  const [position, setPosition] = useState(target);
+  const fromRef = useRef(target);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const from = fromRef.current;
+    const to = target;
+    // Skip tween if first render or virtually unchanged
+    const dist = Math.hypot(to.lat - from.lat, to.lng - from.lng);
+    if (dist < 1e-6) {
+      setPosition(to);
+      return;
+    }
+
+    const duration = 1200;
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      // ease-out cubic
+      const e = 1 - Math.pow(1 - t, 3);
+      setPosition({
+        lat: from.lat + (to.lat - from.lat) * e,
+        lng: from.lng + (to.lng - from.lng) * e,
+      });
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(step);
+      } else {
+        fromRef.current = to;
+      }
+    };
+    rafRef.current = requestAnimationFrame(step);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target.lat, target.lng]);
 
   const tone =
     status === "offline"
