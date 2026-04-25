@@ -60,7 +60,7 @@ export function VehicleCard({ vehicle, driver, active, onClick }: Props) {
         <StatusDot status={status} />
       </div>
       <p className="mt-3 truncate text-xs text-muted-foreground">
-        {vehicle.current_location_label ?? `${vehicle.make ?? ""} ${vehicle.model ?? ""}`.trim() || "—"}
+        {vehicle.current_location_label ?? (`${vehicle.make ?? ""} ${vehicle.model ?? ""}`.trim() || "—")}
       </p>
       <div className="mt-3 grid grid-cols-3 gap-2 text-[11px]">
         <Stat label="Fuel" value={`${Math.round(fuel)}%`} tone={fuel < 25 ? "warn" : undefined} />
