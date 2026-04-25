@@ -14,6 +14,211 @@ export type Database = {
   }
   public: {
     Tables: {
+      alerts: {
+        Row: {
+          created_at: string
+          driver_id: string | null
+          id: string
+          message: string | null
+          organization_id: string
+          resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          title: string
+          trip_id: string | null
+          type: Database["public"]["Enums"]["alert_type"]
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          message?: string | null
+          organization_id: string
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          title: string
+          trip_id?: string | null
+          type: Database["public"]["Enums"]["alert_type"]
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          message?: string | null
+          organization_id?: string
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          title?: string
+          trip_id?: string | null
+          type?: Database["public"]["Enums"]["alert_type"]
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alerts_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alerts_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      drivers: {
+        Row: {
+          created_at: string
+          current_vehicle_id: string | null
+          email: string | null
+          full_name: string
+          hos_remaining_minutes: number | null
+          id: string
+          license_expiry: string | null
+          license_number: string | null
+          license_state: string | null
+          organization_id: string
+          phone: string | null
+          status: Database["public"]["Enums"]["driver_status"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_vehicle_id?: string | null
+          email?: string | null
+          full_name: string
+          hos_remaining_minutes?: number | null
+          id?: string
+          license_expiry?: string | null
+          license_number?: string | null
+          license_state?: string | null
+          organization_id: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["driver_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_vehicle_id?: string | null
+          email?: string | null
+          full_name?: string
+          hos_remaining_minutes?: number | null
+          id?: string
+          license_expiry?: string | null
+          license_number?: string | null
+          license_state?: string | null
+          organization_id?: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["driver_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drivers_current_vehicle_id_fkey"
+            columns: ["current_vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "drivers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          plan: Database["public"]["Enums"]["org_plan"]
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          plan?: Database["public"]["Enums"]["org_plan"]
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          plan?: Database["public"]["Enums"]["org_plan"]
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -44,6 +249,100 @@ export type Database = {
         }
         Relationships: []
       }
+      trips: {
+        Row: {
+          actual_delivery_at: string | null
+          actual_pickup_at: string | null
+          created_at: string
+          destination_label: string
+          destination_lat: number | null
+          destination_lng: number | null
+          distance_miles: number | null
+          driver_id: string | null
+          id: string
+          notes: string | null
+          organization_id: string
+          origin_label: string
+          origin_lat: number | null
+          origin_lng: number | null
+          reference: string | null
+          revenue_cents: number | null
+          scheduled_delivery_at: string | null
+          scheduled_pickup_at: string | null
+          status: Database["public"]["Enums"]["trip_status"]
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          actual_delivery_at?: string | null
+          actual_pickup_at?: string | null
+          created_at?: string
+          destination_label: string
+          destination_lat?: number | null
+          destination_lng?: number | null
+          distance_miles?: number | null
+          driver_id?: string | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          origin_label: string
+          origin_lat?: number | null
+          origin_lng?: number | null
+          reference?: string | null
+          revenue_cents?: number | null
+          scheduled_delivery_at?: string | null
+          scheduled_pickup_at?: string | null
+          status?: Database["public"]["Enums"]["trip_status"]
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          actual_delivery_at?: string | null
+          actual_pickup_at?: string | null
+          created_at?: string
+          destination_label?: string
+          destination_lat?: number | null
+          destination_lng?: number | null
+          distance_miles?: number | null
+          driver_id?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          origin_label?: string
+          origin_lat?: number | null
+          origin_lng?: number | null
+          reference?: string | null
+          revenue_cents?: number | null
+          scheduled_delivery_at?: string | null
+          scheduled_pickup_at?: string | null
+          status?: Database["public"]["Enums"]["trip_status"]
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trips_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trips_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trips_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -65,11 +364,90 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicles: {
+        Row: {
+          created_at: string
+          current_driver_id: string | null
+          current_lat: number | null
+          current_lng: number | null
+          current_location_label: string | null
+          fuel_level_pct: number | null
+          id: string
+          last_ping_at: string | null
+          license_plate: string | null
+          make: string | null
+          model: string | null
+          odometer_miles: number | null
+          organization_id: string
+          status: Database["public"]["Enums"]["vehicle_status"]
+          truck_number: string
+          updated_at: string
+          vin: string | null
+          year: number | null
+        }
+        Insert: {
+          created_at?: string
+          current_driver_id?: string | null
+          current_lat?: number | null
+          current_lng?: number | null
+          current_location_label?: string | null
+          fuel_level_pct?: number | null
+          id?: string
+          last_ping_at?: string | null
+          license_plate?: string | null
+          make?: string | null
+          model?: string | null
+          odometer_miles?: number | null
+          organization_id: string
+          status?: Database["public"]["Enums"]["vehicle_status"]
+          truck_number: string
+          updated_at?: string
+          vin?: string | null
+          year?: number | null
+        }
+        Update: {
+          created_at?: string
+          current_driver_id?: string | null
+          current_lat?: number | null
+          current_lng?: number | null
+          current_location_label?: string | null
+          fuel_level_pct?: number | null
+          id?: string
+          last_ping_at?: string | null
+          license_plate?: string | null
+          make?: string | null
+          model?: string | null
+          odometer_miles?: number | null
+          organization_id?: string
+          status?: Database["public"]["Enums"]["vehicle_status"]
+          truck_number?: string
+          updated_at?: string
+          vin?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_current_driver_fkey"
+            columns: ["current_driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_user_org: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -77,8 +455,23 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_org_dispatcher_or_owner: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
+      alert_severity: "info" | "warning" | "critical"
+      alert_type:
+        | "hos_violation"
+        | "maintenance_due"
+        | "fuel_low"
+        | "route_deviation"
+        | "speeding"
+        | "idle_excessive"
+        | "eta_delay"
+        | "document_expiring"
+        | "other"
       app_role:
         | "super_admin"
         | "fleet_owner"
@@ -86,6 +479,21 @@ export type Database = {
         | "driver"
         | "safety_manager"
         | "partner"
+      driver_status:
+        | "on_duty"
+        | "off_duty"
+        | "driving"
+        | "sleeper"
+        | "unavailable"
+      org_plan: "trial" | "starter" | "pro" | "enterprise"
+      trip_status:
+        | "planned"
+        | "assigned"
+        | "in_transit"
+        | "delivered"
+        | "cancelled"
+        | "delayed"
+      vehicle_status: "active" | "idle" | "maintenance" | "out_of_service"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -213,6 +621,18 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      alert_severity: ["info", "warning", "critical"],
+      alert_type: [
+        "hos_violation",
+        "maintenance_due",
+        "fuel_low",
+        "route_deviation",
+        "speeding",
+        "idle_excessive",
+        "eta_delay",
+        "document_expiring",
+        "other",
+      ],
       app_role: [
         "super_admin",
         "fleet_owner",
@@ -221,6 +641,23 @@ export const Constants = {
         "safety_manager",
         "partner",
       ],
+      driver_status: [
+        "on_duty",
+        "off_duty",
+        "driving",
+        "sleeper",
+        "unavailable",
+      ],
+      org_plan: ["trial", "starter", "pro", "enterprise"],
+      trip_status: [
+        "planned",
+        "assigned",
+        "in_transit",
+        "delivered",
+        "cancelled",
+        "delayed",
+      ],
+      vehicle_status: ["active", "idle", "maintenance", "out_of_service"],
     },
   },
 } as const
