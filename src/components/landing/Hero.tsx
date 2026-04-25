@@ -1,0 +1,53 @@
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import heroImg from "@/assets/hero-truck.jpg";
+
+export function Hero() {
+  return (
+    <section className="relative overflow-hidden">
+      <div
+        className="absolute inset-0 -z-10"
+        style={{ background: "var(--gradient-hero)" }}
+        aria-hidden
+      />
+      <div className="mx-auto max-w-7xl px-6 pt-20 pb-12 md:pt-28 md:pb-20">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-success" />
+            AI-native trucking OS · Now in early access
+          </div>
+          <h1 className="text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+            Run your fleet like the
+            <span className="bg-[image:var(--gradient-primary)] bg-clip-text text-transparent"> top 1%.</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-xl text-balance text-base text-muted-foreground sm:text-lg">
+            TruckStrata replaces Samsara and Motive with a calmer, smarter
+            operating system — built for owner-operators and small fleets.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link to="/dispatch">
+              <Button size="lg" className="rounded-full px-7 shadow-[var(--shadow-soft)]">
+                Open the dashboard
+              </Button>
+            </Link>
+            <Button size="lg" variant="ghost" className="rounded-full px-7">
+              Watch 90s demo →
+            </Button>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-16 max-w-6xl">
+          <div className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-[var(--shadow-elevated)]">
+            <img
+              src={heroImg}
+              alt="A modern semi-truck on a desert highway at golden hour"
+              width={1920}
+              height={1280}
+              className="h-auto w-full object-cover"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
