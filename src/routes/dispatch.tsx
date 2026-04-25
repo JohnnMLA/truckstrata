@@ -7,9 +7,15 @@ import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
 import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
 import { Button } from "@/components/ui/button";
-import { Search, Bell, Plus, Loader2, Sparkles, Truck } from "lucide-react";
+import { Search, Bell, Plus, Loader2, Sparkles, Truck, Radio } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useVehicles, useDrivers, useSeedDemoFleet } from "@/hooks/useFleetData";
+import {
+  useVehicles,
+  useDrivers,
+  useSeedDemoFleet,
+  useRealtimeVehicles,
+  useSimulateVehiclePings,
+} from "@/hooks/useFleetData";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dispatch")({
