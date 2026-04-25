@@ -98,9 +98,7 @@ function DispatchPage() {
             <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition hover:text-foreground">
               <Bell className="h-4 w-4" strokeWidth={1.8} />
             </button>
-            <Button size="sm" className="rounded-full">
-              <Plus className="mr-1 h-4 w-4" /> New trip
-            </Button>
+            <NewTripDialog />
           </div>
         </header>
 
