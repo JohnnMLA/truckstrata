@@ -5,6 +5,7 @@ import { FleetMap } from "@/components/dashboard/FleetMap";
 import { VehicleCard } from "@/components/dashboard/VehicleCard";
 import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
+import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
 import { Button } from "@/components/ui/button";
 import { Search, Bell, Plus, Loader2, Sparkles, Truck } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -97,9 +98,7 @@ function DispatchPage() {
             <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition hover:text-foreground">
               <Bell className="h-4 w-4" strokeWidth={1.8} />
             </button>
-            <Button size="sm" className="rounded-full">
-              <Plus className="mr-1 h-4 w-4" /> New trip
-            </Button>
+            <NewTripDialog />
           </div>
         </header>
 
