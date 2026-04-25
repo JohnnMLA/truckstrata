@@ -5,6 +5,7 @@ import { FleetMap } from "@/components/dashboard/FleetMap";
 import { VehicleCard } from "@/components/dashboard/VehicleCard";
 import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
+import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
 import { Button } from "@/components/ui/button";
 import { Search, Bell, Plus, Loader2, Sparkles, Truck } from "lucide-react";
 import { useAuth } from "@/lib/auth";
