@@ -31,6 +31,7 @@ const nav = [
 export function DashboardSidebar() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const fullName =
     (user?.user_metadata?.full_name as string | undefined) ??
@@ -57,23 +58,20 @@ export function DashboardSidebar() {
       </div>
       <nav className="mt-6 flex flex-1 flex-col gap-0.5">
         {nav.map((item) => {
+          const isActive =
+            "to" in item && item.to ? location.pathname === item.to : false;
           const inner = (
             <>
               <item.icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
               <span className="flex-1">{item.label}</span>
-              {item.badge && (
-                <span className="rounded-full bg-destructive px-1.5 py-0.5 text-[10px] font-semibold text-destructive-foreground">
-                  {item.badge}
-                </span>
-              )}
             </>
           );
           const className = `flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition ${
-            item.active
+            isActive
               ? "bg-card text-foreground shadow-[var(--shadow-soft)]"
               : "text-muted-foreground hover:bg-card hover:text-foreground"
           }`;
-          return item.to ? (
+          return "to" in item && item.to ? (
             <Link key={item.label} to={item.to} className={className}>
               {inner}
             </Link>
