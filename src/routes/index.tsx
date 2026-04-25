@@ -1,26 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { MarketingHeader } from "@/components/MarketingHeader";
+import { Hero } from "@/components/landing/Hero";
+import { Pillars } from "@/components/landing/Pillars";
+import { CTA } from "@/components/landing/CTA";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "TruckStrata · The AI-native trucking OS" },
+      {
+        name: "description",
+        content:
+          "TruckStrata replaces Samsara and Motive with a calmer, smarter operating system for owner-operators and small fleets.",
+      },
+      { property: "og:title", content: "TruckStrata · The AI-native trucking OS" },
+      {
+        property: "og:description",
+        content: "Live fleet tracking, AI dispatch copilots, and road intelligence — for half the cost.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background text-foreground">
+      <MarketingHeader />
+      <main>
+        <Hero />
+        <Pillars />
+        <CTA />
+      </main>
     </div>
   );
-}
-
-function Index() {
-  return <PlaceholderIndex />;
 }
