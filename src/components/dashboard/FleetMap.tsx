@@ -1,4 +1,3 @@
-import "google.maps";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
