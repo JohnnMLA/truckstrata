@@ -38,6 +38,10 @@ function DispatchPage() {
   const { data: vehicles, isLoading: vehiclesLoading } = useVehicles();
   const { data: drivers } = useDrivers();
   const seed = useSeedDemoFleet();
+  const simulate = useSimulateVehiclePings();
+
+  // Subscribe to live vehicle updates (location, status, fuel, etc.)
+  useRealtimeVehicles();
 
   const driversById = useMemo(
     () => Object.fromEntries((drivers ?? []).map((d) => [d.id, d])),
