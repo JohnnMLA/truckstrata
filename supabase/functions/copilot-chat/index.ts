@@ -35,34 +35,53 @@ Deno.serve(async (req) => {
     });
 
     // Pull live fleet snapshot (RLS-scoped to caller's org).
-    const [vehiclesRes, driversRes, tripsRes, alertsRes] = await Promise.all([
-      supabase
-        .from("vehicles")
-        .select(
-          "id, truck_number, status, current_location_label, fuel_level_pct, last_ping_at, current_driver_id, odometer_miles",
-        ),
-      supabase
-        .from("drivers")
-        .select("id, full_name, status, hos_remaining_minutes, current_vehicle_id, license_expiry"),
-      supabase
-        .from("trips")
-        .select(
-          "id, reference, origin_label, destination_label, status, vehicle_id, driver_id, distance_miles, revenue_cents, scheduled_pickup_at, scheduled_delivery_at",
-        )
-        .order("scheduled_pickup_at", { ascending: false, nullsFirst: false })
-        .limit(25),
-      supabase
-        .from("alerts")
-        .select("id, type, severity, title, message, vehicle_id, driver_id, created_at")
-        .eq("resolved", false)
-        .order("created_at", { ascending: false })
-        .limit(15),
-    ]);
+    const [vehiclesRes, driversRes, tripsRes, alertsRes, maintRes, recordsRes] =
+      await Promise.all([
+        supabase
+          .from("vehicles")
+          .select(
+            "id, truck_number, status, current_location_label, fuel_level_pct, last_ping_at, current_driver_id, odometer_miles",
+          ),
+        supabase
+          .from("drivers")
+          .select(
+            "id, full_name, status, hos_remaining_minutes, current_vehicle_id, license_expiry",
+          ),
+        supabase
+          .from("trips")
+          .select(
+            "id, reference, origin_label, destination_label, status, vehicle_id, driver_id, distance_miles, revenue_cents, scheduled_pickup_at, scheduled_delivery_at",
+          )
+          .order("scheduled_pickup_at", { ascending: false, nullsFirst: false })
+          .limit(25),
+        supabase
+          .from("alerts")
+          .select(
+            "id, type, severity, title, message, vehicle_id, driver_id, created_at",
+          )
+          .eq("resolved", false)
+          .order("created_at", { ascending: false })
+          .limit(15),
+        supabase
+          .from("maintenance_schedules")
+          .select(
+            "id, vehicle_id, kind, label, next_due_at, next_due_miles, last_service_at, last_service_miles, interval_days, interval_miles",
+          )
+          .order("next_due_at", { ascending: true, nullsFirst: false })
+          .limit(25),
+        supabase
+          .from("maintenance_records")
+          .select("id, vehicle_id, kind, performed_at, odometer_miles, cost_cents")
+          .order("performed_at", { ascending: false })
+          .limit(15),
+      ]);
 
     if (vehiclesRes.error) throw vehiclesRes.error;
     if (driversRes.error) throw driversRes.error;
     if (tripsRes.error) throw tripsRes.error;
     if (alertsRes.error) throw alertsRes.error;
+    if (maintRes.error) throw maintRes.error;
+    if (recordsRes.error) throw recordsRes.error;
 
     const fleetSnapshot = {
       generated_at: new Date().toISOString(),
@@ -70,6 +89,8 @@ Deno.serve(async (req) => {
       drivers: driversRes.data ?? [],
       recent_trips: tripsRes.data ?? [],
       open_alerts: alertsRes.data ?? [],
+      maintenance_schedules: maintRes.data ?? [],
+      recent_maintenance: recordsRes.data ?? [],
     };
 
     const systemPrompt = `You are TruckStrata's AI Dispatch Copilot, an expert fleet operator assisting a dispatcher in real time.
