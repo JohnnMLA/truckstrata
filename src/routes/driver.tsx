@@ -28,6 +28,8 @@ import {
   type DBDriverTrip,
 } from "@/hooks/useDriverPortal";
 import { toast } from "sonner";
+import { TripDocumentsDialog } from "@/components/dashboard/TripDocumentsDialog";
+import { FileText } from "lucide-react";
 
 export const Route = createFileRoute("/driver")({
   head: () => ({
