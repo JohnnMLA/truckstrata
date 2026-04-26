@@ -141,6 +141,9 @@ function DispatchPage() {
           </div>
         </header>
 
+        {/* Welcome banner — shown until dismissed when there are no trips yet */}
+        <WelcomeBanner show={!vehiclesLoading && (trips ?? []).length === 0} />
+
         {/* KPI strip */}
         <div className="grid grid-cols-2 gap-3 px-6 pt-5 md:grid-cols-4">
           <Kpi label="Active trucks" value={`${active}`} sub={`of ${list.length}`} tone="success" />
@@ -171,9 +174,11 @@ function DispatchPage() {
                   )}
                   Load demo fleet
                 </Button>
-                <Button variant="outline" className="rounded-full">
-                  <Plus className="mr-2 h-4 w-4" /> Add truck
-                </Button>
+                <Link to="/settings">
+                  <Button variant="outline" className="rounded-full">
+                    <Plus className="mr-2 h-4 w-4" /> Add truck
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
