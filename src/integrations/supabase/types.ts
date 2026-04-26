@@ -160,6 +160,142 @@ export type Database = {
           },
         ]
       }
+      maintenance_records: {
+        Row: {
+          cost_cents: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: Database["public"]["Enums"]["maintenance_kind"]
+          notes: string | null
+          odometer_miles: number | null
+          organization_id: string
+          performed_at: string
+          schedule_id: string | null
+          updated_at: string
+          vehicle_id: string
+          vendor: string | null
+        }
+        Insert: {
+          cost_cents?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["maintenance_kind"]
+          notes?: string | null
+          odometer_miles?: number | null
+          organization_id: string
+          performed_at?: string
+          schedule_id?: string | null
+          updated_at?: string
+          vehicle_id: string
+          vendor?: string | null
+        }
+        Update: {
+          cost_cents?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["maintenance_kind"]
+          notes?: string | null
+          odometer_miles?: number | null
+          organization_id?: string
+          performed_at?: string
+          schedule_id?: string | null
+          updated_at?: string
+          vehicle_id?: string
+          vendor?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_records_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_schedules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_records_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_schedules: {
+        Row: {
+          created_at: string
+          id: string
+          interval_days: number | null
+          interval_miles: number | null
+          kind: Database["public"]["Enums"]["maintenance_kind"]
+          label: string | null
+          last_service_at: string | null
+          last_service_miles: number | null
+          next_due_at: string | null
+          next_due_miles: number | null
+          notes: string | null
+          organization_id: string
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interval_days?: number | null
+          interval_miles?: number | null
+          kind?: Database["public"]["Enums"]["maintenance_kind"]
+          label?: string | null
+          last_service_at?: string | null
+          last_service_miles?: number | null
+          next_due_at?: string | null
+          next_due_miles?: number | null
+          notes?: string | null
+          organization_id: string
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interval_days?: number | null
+          interval_miles?: number | null
+          kind?: Database["public"]["Enums"]["maintenance_kind"]
+          label?: string | null
+          last_service_at?: string | null
+          last_service_miles?: number | null
+          next_due_at?: string | null
+          next_due_miles?: number | null
+          notes?: string | null
+          organization_id?: string
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_schedules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_schedules_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -639,6 +775,16 @@ export type Database = {
         | "driving"
         | "sleeper"
         | "unavailable"
+      maintenance_kind:
+        | "oil_change"
+        | "tire_rotation"
+        | "brake_inspection"
+        | "dot_inspection"
+        | "annual_inspection"
+        | "transmission_service"
+        | "coolant_flush"
+        | "air_filter"
+        | "other"
       notification_type: "trip_assignment" | "trip_reminder" | "info"
       org_plan: "trial" | "starter" | "pro" | "enterprise"
       trip_document_kind: "bol" | "pod" | "invoice" | "photo" | "other"
@@ -804,6 +950,17 @@ export const Constants = {
         "driving",
         "sleeper",
         "unavailable",
+      ],
+      maintenance_kind: [
+        "oil_change",
+        "tire_rotation",
+        "brake_inspection",
+        "dot_inspection",
+        "annual_inspection",
+        "transmission_service",
+        "coolant_flush",
+        "air_filter",
+        "other",
       ],
       notification_type: ["trip_assignment", "trip_reminder", "info"],
       org_plan: ["trial", "starter", "pro", "enterprise"],
