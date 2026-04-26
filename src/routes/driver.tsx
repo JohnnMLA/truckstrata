@@ -173,7 +173,7 @@ function DriverPortalPage() {
 
       {!online && (
         <div className="mx-auto max-w-xl px-4 pt-3">
-          <div className="flex items-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[12px] font-medium text-amber-700 dark:text-amber-300">
+          <div className="flex items-center gap-2 rounded-2xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-[12px] font-medium text-destructive">
             <WifiOff className="h-3.5 w-3.5" />
             You're offline. Updates will sync when you reconnect.
           </div>
