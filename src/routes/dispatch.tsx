@@ -13,6 +13,7 @@ import { useAuth } from "@/lib/auth";
 import {
   useVehicles,
   useDrivers,
+  useTrips,
   useSeedDemoFleet,
   useRealtimeVehicles,
   useRealtimeAlerts,
@@ -40,6 +41,7 @@ function DispatchPage() {
 
   const { data: vehicles, isLoading: vehiclesLoading } = useVehicles();
   const { data: drivers } = useDrivers();
+  const { data: trips } = useTrips();
   const seed = useSeedDemoFleet();
   const simulate = useSimulateVehiclePings();
 
@@ -203,7 +205,7 @@ function DispatchPage() {
 
             {/* Map */}
             <section className="order-1 min-h-[420px] xl:order-2 xl:min-h-0">
-              <FleetMap vehicles={list} selectedId={selected} onSelect={setSelected} />
+              <FleetMap vehicles={list} trips={trips ?? []} selectedId={selected} onSelect={setSelected} />
             </section>
 
             {/* Right column */}
