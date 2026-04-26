@@ -12,6 +12,7 @@ import {
   Store,
   LogOut,
   Route as RouteIcon,
+  CalendarDays,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ import { toast } from "sonner";
 const nav = [
   { label: "Overview", icon: LayoutGrid, to: "/dispatch" as const },
   { label: "Trips", icon: RouteIcon, to: "/trips" as const },
+  { label: "Schedule", icon: CalendarDays, to: "/schedule" as const },
   { label: "Live map", icon: Map },
   { label: "Vehicles", icon: Truck },
   { label: "Drivers", icon: Users },

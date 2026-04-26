@@ -160,6 +160,92 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          link: string | null
+          organization_id: string
+          read_at: string | null
+          recipient_driver_id: string | null
+          recipient_user_id: string | null
+          scheduled_for: string | null
+          sent_at: string | null
+          title: string
+          trip_id: string | null
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          link?: string | null
+          organization_id: string
+          read_at?: string | null
+          recipient_driver_id?: string | null
+          recipient_user_id?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          title: string
+          trip_id?: string | null
+          type?: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          link?: string | null
+          organization_id?: string
+          read_at?: string | null
+          recipient_driver_id?: string | null
+          recipient_user_id?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          title?: string
+          trip_id?: string | null
+          type?: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_recipient_driver_id_fkey"
+            columns: ["recipient_driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_members: {
         Row: {
           created_at: string
@@ -485,6 +571,7 @@ export type Database = {
         | "driving"
         | "sleeper"
         | "unavailable"
+      notification_type: "trip_assignment" | "trip_reminder" | "info"
       org_plan: "trial" | "starter" | "pro" | "enterprise"
       trip_status:
         | "planned"
@@ -648,6 +735,7 @@ export const Constants = {
         "sleeper",
         "unavailable",
       ],
+      notification_type: ["trip_assignment", "trip_reminder", "info"],
       org_plan: ["trial", "starter", "pro", "enterprise"],
       trip_status: [
         "planned",

@@ -10,13 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TripsRouteImport } from './routes/trips'
+import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as DispatchRouteImport } from './routes/dispatch'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
 
 const TripsRoute = TripsRouteImport.update({
   id: '/trips',
   path: '/trips',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScheduleRoute = ScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DispatchRoute = DispatchRouteImport.update({
@@ -34,39 +41,72 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksSendRemindersRoute =
+  ApiPublicHooksSendRemindersRouteImport.update({
+    id: '/api/public/hooks/send-reminders',
+    path: '/api/public/hooks/send-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dispatch': typeof DispatchRoute
+  '/schedule': typeof ScheduleRoute
   '/trips': typeof TripsRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dispatch': typeof DispatchRoute
+  '/schedule': typeof ScheduleRoute
   '/trips': typeof TripsRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dispatch': typeof DispatchRoute
+  '/schedule': typeof ScheduleRoute
   '/trips': typeof TripsRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dispatch' | '/trips'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dispatch'
+    | '/schedule'
+    | '/trips'
+    | '/api/public/hooks/send-reminders'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dispatch' | '/trips'
-  id: '__root__' | '/' | '/auth' | '/dispatch' | '/trips'
+  to:
+    | '/'
+    | '/auth'
+    | '/dispatch'
+    | '/schedule'
+    | '/trips'
+    | '/api/public/hooks/send-reminders'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/dispatch'
+    | '/schedule'
+    | '/trips'
+    | '/api/public/hooks/send-reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DispatchRoute: typeof DispatchRoute
+  ScheduleRoute: typeof ScheduleRoute
   TripsRoute: typeof TripsRoute
+  ApiPublicHooksSendRemindersRoute: typeof ApiPublicHooksSendRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -76,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/trips'
       fullPath: '/trips'
       preLoaderRoute: typeof TripsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedule': {
+      id: '/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof ScheduleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dispatch': {
@@ -99,6 +146,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/send-reminders': {
+      id: '/api/public/hooks/send-reminders'
+      path: '/api/public/hooks/send-reminders'
+      fullPath: '/api/public/hooks/send-reminders'
+      preLoaderRoute: typeof ApiPublicHooksSendRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,17 +160,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DispatchRoute: DispatchRoute,
+  ScheduleRoute: ScheduleRoute,
   TripsRoute: TripsRoute,
+  ApiPublicHooksSendRemindersRoute: ApiPublicHooksSendRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
