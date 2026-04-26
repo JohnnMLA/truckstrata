@@ -185,8 +185,8 @@ Rules:
         );
       }
       return new Response(
-        JSON.stringify({ error: "AI gateway error", detail: txt }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({ error: "AI service unavailable. Please try again later." }),
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
@@ -209,9 +209,7 @@ Rules:
   } catch (err) {
     console.error("copilot-suggestions error", err);
     return new Response(
-      JSON.stringify({
-        error: err instanceof Error ? err.message : "Unknown error",
-      }),
+      JSON.stringify({ error: "Unable to generate suggestions right now." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
