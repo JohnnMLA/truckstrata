@@ -592,35 +592,72 @@ function DriversTab() {
             <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-4 py-2 text-left font-medium">Name</th>
-                <th className="px-4 py-2 text-left font-medium">Phone</th>
+                <th className="px-4 py-2 text-left font-medium">Contact</th>
+                <th className="px-4 py-2 text-left font-medium">CDL</th>
                 <th className="px-4 py-2 text-left font-medium">Status</th>
-                <th className="px-4 py-2 text-left font-medium">Portal access</th>
+                <th className="px-4 py-2 text-left font-medium">Portal</th>
                 <th className="px-4 py-2"></th>
               </tr>
             </thead>
             <tbody>
-              {(drivers ?? []).map((d) => (
-                <tr key={d.id} className="border-t border-border/40">
-                  <td className="px-4 py-3 font-medium text-foreground">
-                    {d.full_name}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {d.phone ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground capitalize">
-                    {d.status.replace("_", " ")}
-                  </td>
-                  <td className="px-4 py-3">
-                    {d.user_id ? (
-                      <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-medium text-success">
-                        Linked
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                        Not invited
-                      </span>
-                    )}
-                  </td>
+              {(drivers ?? []).map((d) => {
+                const expiry = d.license_expiry ? new Date(d.license_expiry) : null;
+                const expSoon =
+                  expiry && expiry.getTime() - Date.now() < 1000 * 60 * 60 * 24 * 30;
+                const expired = expiry && expiry.getTime() < Date.now();
+                return (
+                  <tr key={d.id} className="border-t border-border/40">
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      {d.full_name}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      <div className="flex flex-col">
+                        {d.email && (
+                          <span className="text-foreground">{d.email}</span>
+                        )}
+                        <span className="text-[11px]">{d.phone ?? "—"}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {d.license_number ? (
+                        <div className="flex flex-col">
+                          <span className="text-foreground">
+                            {d.license_state ? `${d.license_state} · ` : ""}
+                            {d.license_number}
+                          </span>
+                          {expiry && (
+                            <span
+                              className={`text-[11px] ${
+                                expired
+                                  ? "text-destructive"
+                                  : expSoon
+                                    ? "text-warning"
+                                    : "text-muted-foreground"
+                              }`}
+                            >
+                              {expired ? "Expired " : "Exp "}
+                              {format(expiry, "MMM d, yyyy")}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground capitalize">
+                      {d.status.replace("_", " ")}
+                    </td>
+                    <td className="px-4 py-3">
+                      {d.user_id ? (
+                        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-medium text-success">
+                          Linked
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                          Not invited
+                        </span>
+                      )}
+                    </td>
                   <td className="px-4 py-3 text-right">
                     <Button variant="ghost" size="icon" onClick={() => onEdit(d.id)}>
                       <Pencil className="h-4 w-4 text-muted-foreground" />
