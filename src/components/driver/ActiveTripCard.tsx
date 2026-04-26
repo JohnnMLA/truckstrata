@@ -11,10 +11,13 @@ import { Button } from "@/components/ui/button";
 import { TripDocumentsDialog } from "@/components/dashboard/TripDocumentsDialog";
 import { useUpdateTripProgress, type DBDriverTrip } from "@/hooks/useDriverPortal";
 import { QuickCaptureButton } from "./QuickCaptureButton";
+import { ReportIssueDialog } from "./ReportIssueDialog";
 import { RouteBlock, TripMeta, buildDirectionsUrl } from "./TripBits";
 
 interface Props {
   trip: DBDriverTrip;
+  driverId: string;
+  vehicleId?: string | null;
 }
 
 /**
