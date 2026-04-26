@@ -171,12 +171,28 @@ function TripsPage() {
                           )}
                         </td>
                         <td className="px-4 py-3 text-muted-foreground">
-                          {driver?.full_name ?? "—"}
-                          {vehicle && (
-                            <p className="text-[11px] text-muted-foreground">
-                              {vehicle.truck_number}
-                            </p>
-                          )}
+                          <div className="flex flex-col">
+                            <span className="text-foreground">{driver?.full_name ?? "—"}</span>
+                            {vehicle && (
+                              <span className="text-[11px] text-muted-foreground">
+                                {vehicle.truck_number}
+                              </span>
+                            )}
+                            {driver && t.driver_response && t.driver_response !== "pending" && (
+                              <span
+                                className={`mt-0.5 text-[10px] font-medium uppercase tracking-wide ${
+                                  t.driver_response === "accepted" ? "text-success" : "text-destructive"
+                                }`}
+                              >
+                                Driver {t.driver_response}
+                              </span>
+                            )}
+                            {driver && t.driver_response === "pending" && (
+                              <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-warning">
+                                Awaiting driver
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-muted-foreground">
                           {t.scheduled_pickup_at

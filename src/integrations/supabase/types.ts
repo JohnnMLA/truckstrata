@@ -345,6 +345,8 @@ export type Database = {
           destination_lng: number | null
           distance_miles: number | null
           driver_id: string | null
+          driver_response: Database["public"]["Enums"]["driver_response"]
+          driver_response_at: string | null
           id: string
           notes: string | null
           organization_id: string
@@ -368,6 +370,8 @@ export type Database = {
           destination_lng?: number | null
           distance_miles?: number | null
           driver_id?: string | null
+          driver_response?: Database["public"]["Enums"]["driver_response"]
+          driver_response_at?: string | null
           id?: string
           notes?: string | null
           organization_id: string
@@ -391,6 +395,8 @@ export type Database = {
           destination_lng?: number | null
           distance_miles?: number | null
           driver_id?: string | null
+          driver_response?: Database["public"]["Enums"]["driver_response"]
+          driver_response_at?: string | null
           id?: string
           notes?: string | null
           organization_id?: string
@@ -533,6 +539,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_current_driver_id: { Args: { _user_id: string }; Returns: string }
       get_user_org: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
@@ -565,6 +572,7 @@ export type Database = {
         | "driver"
         | "safety_manager"
         | "partner"
+      driver_response: "pending" | "accepted" | "declined"
       driver_status:
         | "on_duty"
         | "off_duty"
@@ -728,6 +736,7 @@ export const Constants = {
         "safety_manager",
         "partner",
       ],
+      driver_response: ["pending", "accepted", "declined"],
       driver_status: [
         "on_duty",
         "off_duty",
