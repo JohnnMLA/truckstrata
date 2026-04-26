@@ -280,6 +280,20 @@ function VehicleMarker({
                 </>
               )}
             </div>
+            {eta && (
+              <div
+                className={`mt-2 flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium ${
+                  eta.isDelayed
+                    ? "border-destructive/30 bg-destructive/5 text-destructive"
+                    : "border-border/60 bg-muted/40 text-foreground"
+                }`}
+              >
+                <Clock className="h-3 w-3" />
+                {eta.isDelayed
+                  ? `${eta.delayedMinutes} min late · ETA ${formatEta(eta.etaIso)}`
+                  : `ETA ${formatEta(eta.etaIso)} · ${formatDuration(eta.durationSeconds)}`}
+              </div>
+            )}
           </div>
         </InfoWindow>
       )}
