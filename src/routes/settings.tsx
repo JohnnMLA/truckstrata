@@ -708,37 +708,66 @@ function DriversTab() {
                 onChange={(e) => setForm({ ...form, fullName: e.target.value })}
               />
             </div>
-            <div className="grid gap-1.5">
-              <Label>Phone</Label>
-              <Input
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="driver@example.com"
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Phone</Label>
+                <Input
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-[1fr_80px_140px] gap-3">
+              <div className="grid gap-1.5">
+                <Label>CDL number</Label>
+                <Input
+                  value={form.license_number}
+                  onChange={(e) => setForm({ ...form, license_number: e.target.value })}
+                  placeholder="D1234567"
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>State</Label>
+                <Input
+                  value={form.license_state}
+                  onChange={(e) =>
+                    setForm({ ...form, license_state: e.target.value.toUpperCase().slice(0, 2) })
+                  }
+                  placeholder="TX"
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Expires</Label>
+                <Input
+                  type="date"
+                  value={form.license_expiry}
+                  onChange={(e) => setForm({ ...form, license_expiry: e.target.value })}
+                />
+              </div>
             </div>
             {!editId && (
-              <>
-                <div className="grid gap-1.5">
-                  <Label>Email (for portal invite)</Label>
-                  <Input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  />
+              <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-3">
+                <div>
+                  <p className="text-sm font-medium">Send portal invite</p>
+                  <p className="text-xs text-muted-foreground">
+                    Email a sign-up link so they can use the Driver Portal.
+                  </p>
                 </div>
-                <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-3">
-                  <div>
-                    <p className="text-sm font-medium">Send portal invite</p>
-                    <p className="text-xs text-muted-foreground">
-                      Email a sign-up link so they can use the Driver Portal.
-                    </p>
-                  </div>
-                  <Switch
-                    checked={form.sendInvite}
-                    onCheckedChange={(v) => setForm({ ...form, sendInvite: v })}
-                    disabled={!form.email}
-                  />
-                </div>
-              </>
+                <Switch
+                  checked={form.sendInvite}
+                  onCheckedChange={(v) => setForm({ ...form, sendInvite: v })}
+                  disabled={!form.email}
+                />
+              </div>
             )}
           </div>
           <DialogFooter>
