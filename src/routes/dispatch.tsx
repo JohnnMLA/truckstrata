@@ -5,6 +5,7 @@ import { FleetMap } from "@/components/dashboard/FleetMap";
 import { VehicleCard } from "@/components/dashboard/VehicleCard";
 import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
+import { IncidentsPanel } from "@/components/dashboard/IncidentsPanel";
 import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { WelcomeBanner } from "@/components/dashboard/WelcomeBanner";
@@ -217,6 +218,7 @@ function DispatchPage() {
             {/* Right column */}
             <section className="order-3 flex flex-col gap-4">
               <CopilotPanel />
+              <IncidentsPanel />
               <AlertCenter />
             </section>
           </div>

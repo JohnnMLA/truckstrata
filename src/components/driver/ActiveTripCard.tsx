@@ -11,10 +11,13 @@ import { Button } from "@/components/ui/button";
 import { TripDocumentsDialog } from "@/components/dashboard/TripDocumentsDialog";
 import { useUpdateTripProgress, type DBDriverTrip } from "@/hooks/useDriverPortal";
 import { QuickCaptureButton } from "./QuickCaptureButton";
+import { ReportIssueDialog } from "./ReportIssueDialog";
 import { RouteBlock, TripMeta, buildDirectionsUrl } from "./TripBits";
 
 interface Props {
   trip: DBDriverTrip;
+  driverId: string;
+  vehicleId?: string | null;
 }
 
 /**
@@ -22,7 +25,7 @@ interface Props {
  * action as a large primary button (Confirm pickup → Mark delivered),
  * plus quick photo capture and an in-app navigation handoff.
  */
-export function ActiveTripCard({ trip }: Props) {
+export function ActiveTripCard({ trip, driverId, vehicleId }: Props) {
   const update = useUpdateTripProgress();
   const [busy, setBusy] = useState(false);
 
@@ -124,6 +127,13 @@ export function ActiveTripCard({ trip }: Props) {
               All documents &amp; photos
             </Button>
           }
+        />
+
+        <ReportIssueDialog
+          tripId={trip.id}
+          organizationId={trip.organization_id}
+          driverId={driverId}
+          vehicleId={vehicleId}
         />
       </div>
     </article>

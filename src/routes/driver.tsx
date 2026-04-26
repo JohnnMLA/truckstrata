@@ -191,6 +191,8 @@ function DriverPortalPage() {
             pending={pending}
             active={active}
             completed={completed}
+            driverId={driver.id}
+            vehicleId={driver.current_vehicle_id ?? null}
           />
         )}
 
@@ -259,11 +261,15 @@ function TabPanel({
   pending,
   active,
   completed,
+  driverId,
+  vehicleId,
 }: {
   tab: Tab;
   pending: DBDriverTrip[];
   active: DBDriverTrip[];
   completed: DBDriverTrip[];
+  driverId: string;
+  vehicleId: string | null;
 }) {
   if (tab === "offers") {
     if (pending.length === 0) return <EmptyState message="No new offers right now." />;
@@ -284,7 +290,12 @@ function TabPanel({
     return (
       <div className="space-y-3">
         {active.map((trip) => (
-          <ActiveTripCard key={trip.id} trip={trip} />
+          <ActiveTripCard
+            key={trip.id}
+            trip={trip}
+            driverId={driverId}
+            vehicleId={vehicleId}
+          />
         ))}
       </div>
     );

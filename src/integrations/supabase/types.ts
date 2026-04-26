@@ -160,6 +160,101 @@ export type Database = {
           },
         ]
       }
+      incidents: {
+        Row: {
+          created_at: string
+          driver_id: string | null
+          id: string
+          kind: Database["public"]["Enums"]["incident_kind"]
+          location_label: string | null
+          location_lat: number | null
+          location_lng: number | null
+          notes: string | null
+          organization_id: string
+          photo_storage_path: string | null
+          reported_by: string | null
+          resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          title: string
+          trip_id: string | null
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["incident_kind"]
+          location_label?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          notes?: string | null
+          organization_id: string
+          photo_storage_path?: string | null
+          reported_by?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          title: string
+          trip_id?: string | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["incident_kind"]
+          location_label?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          notes?: string | null
+          organization_id?: string
+          photo_storage_path?: string | null
+          reported_by?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          title?: string
+          trip_id?: string | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incidents_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incidents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incidents_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incidents_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       maintenance_records: {
         Row: {
           cost_cents: number | null
@@ -775,6 +870,14 @@ export type Database = {
         | "driving"
         | "sleeper"
         | "unavailable"
+      incident_kind:
+        | "breakdown"
+        | "accident"
+        | "traffic_delay"
+        | "mechanical"
+        | "cargo_issue"
+        | "weather"
+        | "other"
       maintenance_kind:
         | "oil_change"
         | "tire_rotation"
@@ -950,6 +1053,15 @@ export const Constants = {
         "driving",
         "sleeper",
         "unavailable",
+      ],
+      incident_kind: [
+        "breakdown",
+        "accident",
+        "traffic_delay",
+        "mechanical",
+        "cargo_issue",
+        "weather",
+        "other",
       ],
       maintenance_kind: [
         "oil_change",
