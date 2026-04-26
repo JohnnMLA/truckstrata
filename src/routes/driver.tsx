@@ -1,35 +1,29 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  ArrowRight,
-  Check,
   CheckCircle2,
   Clock,
-  LogOut,
-  MapPin,
-  Package,
-  Truck,
-  X,
   Loader2,
-  PlayCircle,
-  CircleDashed,
+  LogOut,
+  Truck,
+  WifiOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/Logo";
-import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import {
   useCurrentDriver,
   useMyTrips,
   useMyVehicle,
   useRealtimeMyTrips,
-  useRespondToTrip,
-  useUpdateTripProgress,
   type DBDriverTrip,
 } from "@/hooks/useDriverPortal";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { toast } from "sonner";
-import { TripDocumentsDialog } from "@/components/dashboard/TripDocumentsDialog";
-import { FileText } from "lucide-react";
+import { PendingTripCard } from "@/components/driver/PendingTripCard";
+import { ActiveTripCard } from "@/components/driver/ActiveTripCard";
+import { DeliveredTripCard } from "@/components/driver/DeliveredTripCard";
+import { NoDriverProfile } from "@/components/driver/NoDriverProfile";
+import { DriverStatusDot } from "@/components/driver/TripBits";
 
 export const Route = createFileRoute("/driver")({
   head: () => ({
@@ -37,21 +31,26 @@ export const Route = createFileRoute("/driver")({
       { title: "My Trips · Driver Portal" },
       {
         name: "description",
-        content: "Driver portal for accepting trips and updating delivery status on the road.",
+        content:
+          "Driver portal for accepting trips and updating delivery status on the road.",
       },
       { property: "og:title", content: "Driver Portal · TruckStrata" },
       {
         property: "og:description",
-        content: "Accept assignments, navigate, and update trip status from your phone.",
+        content:
+          "Accept assignments, navigate, and update trip status from your phone.",
       },
     ],
   }),
   component: DriverPortalPage,
 });
 
+type Tab = "active" | "offers" | "done";
+
 function DriverPortalPage() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const online = useOnlineStatus();
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -66,7 +65,10 @@ function DriverPortalPage() {
     const t = trips ?? [];
     return {
       pending: t.filter(
-        (x) => x.driver_response === "pending" && x.status !== "delivered" && x.status !== "cancelled",
+        (x) =>
+          x.driver_response === "pending" &&
+          x.status !== "delivered" &&
+          x.status !== "cancelled",
       ),
       active: t.filter(
         (x) =>
@@ -77,6 +79,15 @@ function DriverPortalPage() {
       completed: t.filter((x) => x.status === "delivered"),
     };
   }, [trips]);
+
+  // Default to whichever bucket has work; bias to "offers" when there's a new
+  // pending offer so the driver sees it instantly.
+  const [tab, setTab] = useState<Tab>("active");
+  useEffect(() => {
+    if (pending.length > 0) setTab("offers");
+    else if (active.length > 0) setTab("active");
+    else if (completed.length > 0) setTab("done");
+  }, [pending.length, active.length, completed.length]);
 
   if (loading || driverLoading) {
     return (
@@ -99,16 +110,18 @@ function DriverPortalPage() {
     .toUpperCase();
 
   return (
-    <div className="min-h-dvh bg-gradient-to-b from-background to-card/40 pb-12">
-      {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-border/60 bg-background/80 backdrop-blur">
+    <div className="min-h-dvh bg-gradient-to-b from-background to-card/40 pb-20">
+      {/* Sticky status bar — at-a-glance: who you are, your status, your truck */}
+      <header className="sticky top-0 z-20 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
         <div className="mx-auto flex max-w-xl items-center justify-between gap-3 px-4 py-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
               {initials}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-foreground">{driver.full_name}</p>
+              <p className="truncate text-[15px] font-semibold text-foreground">
+                {driver.full_name}
+              </p>
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <DriverStatusDot status={driver.status} />
                 <span className="capitalize">{driver.status.replace("_", " ")}</span>
@@ -118,7 +131,8 @@ function DriverPortalPage() {
           </div>
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
+            className="h-10 w-10 rounded-full"
             onClick={async () => {
               await signOut();
               toast.success("Signed out");
@@ -126,10 +140,45 @@ function DriverPortalPage() {
             }}
             aria-label="Sign out"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-5 w-5" />
           </Button>
         </div>
+
+        {/* Tab bar — large hit targets, badge counts so drivers know where new work is */}
+        <nav className="mx-auto flex max-w-xl gap-1 px-3 pb-2" role="tablist">
+          <TabButton
+            active={tab === "active"}
+            onClick={() => setTab("active")}
+            icon={<Truck className="h-4 w-4" />}
+            label="In progress"
+            count={active.length}
+          />
+          <TabButton
+            active={tab === "offers"}
+            onClick={() => setTab("offers")}
+            icon={<Clock className="h-4 w-4" />}
+            label="Offers"
+            count={pending.length}
+            highlight={pending.length > 0}
+          />
+          <TabButton
+            active={tab === "done"}
+            onClick={() => setTab("done")}
+            icon={<CheckCircle2 className="h-4 w-4" />}
+            label="Delivered"
+            count={completed.length}
+          />
+        </nav>
       </header>
+
+      {!online && (
+        <div className="mx-auto max-w-xl px-4 pt-3">
+          <div className="flex items-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[12px] font-medium text-amber-700 dark:text-amber-300">
+            <WifiOff className="h-3.5 w-3.5" />
+            You're offline. Updates will sync when you reconnect.
+          </div>
+        </div>
+      )}
 
       <main className="mx-auto max-w-xl px-4 pt-4">
         {tripsLoading ? (
@@ -137,41 +186,12 @@ function DriverPortalPage() {
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <div className="space-y-6">
-            <Section
-              icon={<Clock className="h-4 w-4" />}
-              title="New assignments"
-              count={pending.length}
-              empty="No pending offers right now."
-            >
-              {pending.map((trip) => (
-                <PendingTripCard key={trip.id} trip={trip} />
-              ))}
-            </Section>
-
-            <Section
-              icon={<Truck className="h-4 w-4" />}
-              title="In progress"
-              count={active.length}
-              empty="No active trips. Accept an assignment to get rolling."
-            >
-              {active.map((trip) => (
-                <ActiveTripCard key={trip.id} trip={trip} />
-              ))}
-            </Section>
-
-            {completed.length > 0 && (
-              <Section
-                icon={<CheckCircle2 className="h-4 w-4" />}
-                title="Recently delivered"
-                count={completed.length}
-              >
-                {completed.slice(0, 5).map((trip) => (
-                  <DeliveredTripCard key={trip.id} trip={trip} />
-                ))}
-              </Section>
-            )}
-          </div>
+          <TabPanel
+            tab={tab}
+            pending={pending}
+            active={active}
+            completed={completed}
+          />
         )}
 
         <p className="mt-10 text-center text-[11px] text-muted-foreground">
@@ -186,264 +206,104 @@ function DriverPortalPage() {
 
 /* ----------------------------- subcomponents ----------------------------- */
 
-function Section({
+function TabButton({
+  active,
+  onClick,
   icon,
-  title,
+  label,
   count,
-  children,
-  empty,
+  highlight,
 }: {
+  active: boolean;
+  onClick: () => void;
   icon: React.ReactNode;
-  title: string;
+  label: string;
   count: number;
-  children?: React.ReactNode;
-  empty?: string;
+  highlight?: boolean;
 }) {
   return (
-    <section>
-      <div className="mb-2 flex items-center gap-2 px-1">
-        <span className="text-muted-foreground">{icon}</span>
-        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
-        <span className="text-xs text-muted-foreground">· {count}</span>
-      </div>
-      {count === 0 ? (
-        empty && (
-          <p className="rounded-2xl border border-dashed border-border/60 bg-card/40 px-4 py-6 text-center text-xs text-muted-foreground">
-            {empty}
-          </p>
-        )
-      ) : (
-        <div className="space-y-3">{children}</div>
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={[
+        "relative flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-2.5 text-[13px] font-semibold transition-colors",
+        active
+          ? "bg-foreground text-background"
+          : "text-muted-foreground hover:bg-muted/60",
+      ].join(" ")}
+    >
+      <span className={active ? "" : "text-muted-foreground"}>{icon}</span>
+      <span>{label}</span>
+      {count > 0 && (
+        <span
+          className={[
+            "ml-0.5 grid h-5 min-w-[20px] place-items-center rounded-full px-1.5 text-[10px] font-bold",
+            active
+              ? "bg-background/20 text-background"
+              : highlight
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-foreground",
+          ].join(" ")}
+        >
+          {count}
+        </span>
       )}
-    </section>
+    </button>
   );
 }
 
-function PendingTripCard({ trip }: { trip: DBDriverTrip }) {
-  const respond = useRespondToTrip();
-  const [busy, setBusy] = useState<"accept" | "decline" | null>(null);
-
-  return (
-    <article className="rounded-2xl border border-primary/30 bg-card p-4 shadow-[var(--shadow-soft)]">
-      <div className="flex items-center justify-between">
-        <Badge variant="outline" className="rounded-full border-primary/30 bg-primary/5 text-primary">
-          New offer
-        </Badge>
-        {trip.reference && (
-          <span className="text-[11px] font-medium text-muted-foreground">{trip.reference}</span>
-        )}
+function TabPanel({
+  tab,
+  pending,
+  active,
+  completed,
+}: {
+  tab: Tab;
+  pending: DBDriverTrip[];
+  active: DBDriverTrip[];
+  completed: DBDriverTrip[];
+}) {
+  if (tab === "offers") {
+    if (pending.length === 0) return <EmptyState message="No new offers right now." />;
+    return (
+      <div className="space-y-3">
+        {pending.map((trip) => (
+          <PendingTripCard key={trip.id} trip={trip} />
+        ))}
       </div>
-      <RouteBlock trip={trip} />
-      <TripMeta trip={trip} />
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <Button
-          variant="outline"
-          className="rounded-full"
-          disabled={busy !== null}
-          onClick={async () => {
-            setBusy("decline");
-            try {
-              await respond.mutateAsync({ trip, response: "declined" });
-            } finally {
-              setBusy(null);
-            }
-          }}
-        >
-          {busy === "decline" ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <X className="mr-1 h-4 w-4" />}
-          Decline
-        </Button>
-        <Button
-          className="rounded-full"
-          disabled={busy !== null}
-          onClick={async () => {
-            setBusy("accept");
-            try {
-              await respond.mutateAsync({ trip, response: "accepted" });
-            } finally {
-              setBusy(null);
-            }
-          }}
-        >
-          {busy === "accept" ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Check className="mr-1 h-4 w-4" />}
-          Accept
-        </Button>
-      </div>
-    </article>
-  );
-}
-
-function ActiveTripCard({ trip }: { trip: DBDriverTrip }) {
-  const update = useUpdateTripProgress();
-  const [busy, setBusy] = useState(false);
-
-  const stage =
-    trip.actual_delivery_at
-      ? "delivered"
-      : trip.actual_pickup_at
-        ? "in_transit"
-        : "ready";
-
-  async function go(action: "start_pickup" | "mark_delivered") {
-    setBusy(true);
-    try {
-      await update.mutateAsync({ trip, action });
-    } finally {
-      setBusy(false);
-    }
+    );
   }
 
-  return (
-    <article className="rounded-2xl border border-border/60 bg-card p-4 shadow-[var(--shadow-soft)]">
-      <div className="flex items-center justify-between">
-        <Badge variant="outline" className="rounded-full capitalize">
-          {trip.status.replace("_", " ")}
-        </Badge>
-        {trip.reference && (
-          <span className="text-[11px] font-medium text-muted-foreground">{trip.reference}</span>
-        )}
+  if (tab === "active") {
+    if (active.length === 0)
+      return (
+        <EmptyState message="No active trips. Accept an offer to get rolling." />
+      );
+    return (
+      <div className="space-y-3">
+        {active.map((trip) => (
+          <ActiveTripCard key={trip.id} trip={trip} />
+        ))}
       </div>
-      <RouteBlock trip={trip} />
-      <TripMeta trip={trip} />
+    );
+  }
 
-      <div className="mt-4 space-y-2">
-        {stage === "ready" && (
-          <Button className="w-full rounded-full" disabled={busy} onClick={() => go("start_pickup")}>
-            {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlayCircle className="mr-2 h-4 w-4" />}
-            Confirm pickup &amp; start trip
-          </Button>
-        )}
-        {stage === "in_transit" && (
-          <Button className="w-full rounded-full" disabled={busy} onClick={() => go("mark_delivered")}>
-            {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
-            Mark delivered
-          </Button>
-        )}
-        <TripDocumentsDialog
-          tripId={trip.id}
-          organizationId={trip.organization_id}
-          tripLabel={`${trip.origin_label} → ${trip.destination_label}`}
-          allowedKinds={["pod", "photo", "bol", "other"]}
-          trigger={
-            <Button variant="outline" className="w-full rounded-full">
-              <FileText className="mr-2 h-4 w-4" />
-              Documents &amp; photos
-            </Button>
-          }
-        />
-      </div>
-    </article>
-  );
-}
-
-function DeliveredTripCard({ trip }: { trip: DBDriverTrip }) {
+  if (completed.length === 0) return <EmptyState message="No completed trips yet." />;
   return (
-    <article className="rounded-2xl border border-border/60 bg-card/60 p-4">
-      <div className="flex items-center justify-between">
-        <Badge variant="outline" className="rounded-full text-muted-foreground">
-          <CheckCircle2 className="mr-1 h-3 w-3" /> Delivered
-        </Badge>
-        {trip.reference && (
-          <span className="text-[11px] font-medium text-muted-foreground">{trip.reference}</span>
-        )}
-      </div>
-      <RouteBlock trip={trip} muted />
-      {trip.actual_delivery_at && (
-        <p className="mt-2 text-[11px] text-muted-foreground">
-          Delivered {formatPretty(trip.actual_delivery_at)}
-        </p>
-      )}
-    </article>
-  );
-}
-
-function RouteBlock({ trip, muted }: { trip: DBDriverTrip; muted?: boolean }) {
-  const tone = muted ? "text-muted-foreground" : "text-foreground";
-  return (
-    <div className="mt-3 flex items-start gap-3">
-      <div className="mt-1 flex flex-col items-center">
-        <span className="h-2 w-2 rounded-full bg-primary" />
-        <span className="my-1 h-6 w-px bg-border" />
-        <MapPin className="h-3 w-3 text-muted-foreground" />
-      </div>
-      <div className="min-w-0 flex-1 space-y-2">
-        <div>
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Pickup</p>
-          <p className={`truncate text-sm font-medium ${tone}`}>{trip.origin_label}</p>
-        </div>
-        <div>
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Drop-off</p>
-          <p className={`truncate text-sm font-medium ${tone}`}>{trip.destination_label}</p>
-        </div>
-      </div>
+    <div className="space-y-3">
+      {completed.slice(0, 10).map((trip) => (
+        <DeliveredTripCard key={trip.id} trip={trip} />
+      ))}
     </div>
   );
 }
 
-function TripMeta({ trip }: { trip: DBDriverTrip }) {
+function EmptyState({ message }: { message: string }) {
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
-      {trip.scheduled_pickup_at && (
-        <span className="flex items-center gap-1">
-          <Clock className="h-3 w-3" /> Pickup {formatPretty(trip.scheduled_pickup_at)}
-        </span>
-      )}
-      {trip.scheduled_delivery_at && (
-        <span className="flex items-center gap-1">
-          <ArrowRight className="h-3 w-3" /> Drop {formatPretty(trip.scheduled_delivery_at)}
-        </span>
-      )}
-      {trip.distance_miles && (
-        <span className="flex items-center gap-1">
-          <Package className="h-3 w-3" /> {Math.round(trip.distance_miles)} mi
-        </span>
-      )}
-    </div>
+    <p className="rounded-3xl border border-dashed border-border/60 bg-card/40 px-4 py-12 text-center text-sm text-muted-foreground">
+      {message}
+    </p>
   );
-}
-
-function DriverStatusDot({ status }: { status: string }) {
-  const color =
-    status === "driving" || status === "on_duty"
-      ? "bg-emerald-500"
-      : status === "sleeper"
-        ? "bg-sky-500"
-        : status === "unavailable"
-          ? "bg-rose-500"
-          : "bg-muted-foreground/50";
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full ${color}`} />;
-}
-
-function NoDriverProfile({ email, onSignOut }: { email: string; onSignOut: () => Promise<void> }) {
-  const navigate = useNavigate();
-  return (
-    <div className="grid min-h-dvh place-items-center bg-background px-4">
-      <div className="w-full max-w-sm rounded-3xl border border-border/60 bg-card p-6 text-center shadow-[var(--shadow-soft)]">
-        <div className="mx-auto mb-3 flex justify-center">
-          <Logo />
-        </div>
-        <CircleDashed className="mx-auto mb-3 h-8 w-8 text-muted-foreground" strokeWidth={1.5} />
-        <h1 className="text-lg font-semibold text-foreground">No driver profile linked</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Your account ({email}) isn't connected to a driver record yet. Ask your dispatcher to link
-          you, or open the dispatcher dashboard.
-        </p>
-        <div className="mt-5 grid gap-2">
-          <Button onClick={() => navigate({ to: "/dispatch" })}>Go to dispatch</Button>
-          <Button variant="outline" onClick={onSignOut}>
-            Sign out
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function formatPretty(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
 }
