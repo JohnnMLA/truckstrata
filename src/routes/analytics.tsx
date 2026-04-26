@@ -271,6 +271,17 @@ function AnalyticsPage() {
                 </button>
               ))}
             </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-xl"
+              onClick={() => exportTripsCsv(current, days)}
+              disabled={current.length === 0}
+            >
+              <Download className="mr-1.5 h-3.5 w-3.5" />
+              Export CSV
+            </Button>
             <NotificationBell />
           </div>
         </header>
