@@ -168,6 +168,7 @@ export interface UpdateDriverInput {
   phone?: string | null;
   license_number?: string | null;
   license_state?: string | null;
+  license_expiry?: string | null;
 }
 
 export function useUpdateDriver() {
