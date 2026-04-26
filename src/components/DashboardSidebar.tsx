@@ -32,7 +32,7 @@ const nav = [
   { label: "Drivers", icon: Users },
   { label: "Alerts", icon: Bell },
   { label: "Documents", icon: FileText },
-  { label: "Copilots", icon: Sparkles },
+  { label: "Copilots", icon: Sparkles, to: "/copilots" as const },
   { label: "Marketplace", icon: Store },
 ];
 
