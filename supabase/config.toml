@@ -3,5 +3,8 @@ project_id = "konagaulmtxpeauqfazv"
 [functions.copilot-suggestions]
 verify_jwt = true
 
+[functions.copilot-chat]
+verify_jwt = true
+
 [functions.maps-config]
 verify_jwt = false
