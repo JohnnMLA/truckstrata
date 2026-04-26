@@ -7,7 +7,9 @@ import {
   Clock,
   Gauge,
   TrendingUp,
+  Download,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Area,
   AreaChart,
