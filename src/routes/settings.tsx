@@ -493,12 +493,23 @@ function DriversTab() {
     fullName: "",
     email: "",
     phone: "",
+    license_number: "",
+    license_state: "",
+    license_expiry: "",
     sendInvite: true,
   });
 
   const onAdd = () => {
     setEditId(null);
-    setForm({ fullName: "", email: "", phone: "", sendInvite: true });
+    setForm({
+      fullName: "",
+      email: "",
+      phone: "",
+      license_number: "",
+      license_state: "",
+      license_expiry: "",
+      sendInvite: true,
+    });
     setOpen(true);
   };
 
@@ -508,8 +519,11 @@ function DriversTab() {
     setEditId(id);
     setForm({
       fullName: d.full_name,
-      email: "",
+      email: d.email ?? "",
       phone: d.phone ?? "",
+      license_number: d.license_number ?? "",
+      license_state: d.license_state ?? "",
+      license_expiry: d.license_expiry ?? "",
       sendInvite: false,
     });
     setOpen(true);
@@ -522,6 +536,10 @@ function DriversTab() {
           id: editId,
           full_name: form.fullName,
           phone: form.phone || null,
+          email: form.email || null,
+          license_number: form.license_number || null,
+          license_state: form.license_state || null,
+          license_expiry: form.license_expiry || null,
         });
         toast.success("Driver updated");
       } else {
@@ -531,6 +549,18 @@ function DriversTab() {
           phone: form.phone,
           sendInvite: form.sendInvite,
         });
+        // If license info was provided, save it now
+        if (
+          res.driverId &&
+          (form.license_number || form.license_state || form.license_expiry)
+        ) {
+          await updateD.mutateAsync({
+            id: res.driverId,
+            license_number: form.license_number || null,
+            license_state: form.license_state || null,
+            license_expiry: form.license_expiry || null,
+          });
+        }
         toast.success(
           res.invited
             ? `Driver added · invite sent to ${form.email}`
@@ -562,57 +592,95 @@ function DriversTab() {
             <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-4 py-2 text-left font-medium">Name</th>
-                <th className="px-4 py-2 text-left font-medium">Phone</th>
+                <th className="px-4 py-2 text-left font-medium">Contact</th>
+                <th className="px-4 py-2 text-left font-medium">CDL</th>
                 <th className="px-4 py-2 text-left font-medium">Status</th>
-                <th className="px-4 py-2 text-left font-medium">Portal access</th>
+                <th className="px-4 py-2 text-left font-medium">Portal</th>
                 <th className="px-4 py-2"></th>
               </tr>
             </thead>
             <tbody>
-              {(drivers ?? []).map((d) => (
-                <tr key={d.id} className="border-t border-border/40">
-                  <td className="px-4 py-3 font-medium text-foreground">
-                    {d.full_name}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {d.phone ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground capitalize">
-                    {d.status.replace("_", " ")}
-                  </td>
-                  <td className="px-4 py-3">
-                    {d.user_id ? (
-                      <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-medium text-success">
-                        Linked
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                        Not invited
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Button variant="ghost" size="icon" onClick={() => onEdit(d.id)}>
-                      <Pencil className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        deleteD
-                          .mutateAsync(d.id)
-                          .then(() => toast.success("Driver removed"))
-                          .catch((e) => toast.error((e as Error).message))
-                      }
-                    >
-                      <Trash2 className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {(drivers ?? []).map((d) => {
+                const expiry = d.license_expiry ? new Date(d.license_expiry) : null;
+                const expSoon =
+                  expiry && expiry.getTime() - Date.now() < 1000 * 60 * 60 * 24 * 30;
+                const expired = expiry && expiry.getTime() < Date.now();
+                return (
+                  <tr key={d.id} className="border-t border-border/40">
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      {d.full_name}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      <div className="flex flex-col">
+                        {d.email && (
+                          <span className="text-foreground">{d.email}</span>
+                        )}
+                        <span className="text-[11px]">{d.phone ?? "—"}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {d.license_number ? (
+                        <div className="flex flex-col">
+                          <span className="text-foreground">
+                            {d.license_state ? `${d.license_state} · ` : ""}
+                            {d.license_number}
+                          </span>
+                          {expiry && (
+                            <span
+                              className={`text-[11px] ${
+                                expired
+                                  ? "text-destructive"
+                                  : expSoon
+                                    ? "text-warning"
+                                    : "text-muted-foreground"
+                              }`}
+                            >
+                              {expired ? "Expired " : "Exp "}
+                              {format(expiry, "MMM d, yyyy")}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground capitalize">
+                      {d.status.replace("_", " ")}
+                    </td>
+                    <td className="px-4 py-3">
+                      {d.user_id ? (
+                        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-medium text-success">
+                          Linked
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                          Not invited
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Button variant="ghost" size="icon" onClick={() => onEdit(d.id)}>
+                        <Pencil className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          deleteD
+                            .mutateAsync(d.id)
+                            .then(() => toast.success("Driver removed"))
+                            .catch((e) => toast.error((e as Error).message))
+                        }
+                      >
+                        <Trash2 className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
               {(drivers ?? []).length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
                     No drivers yet.
                   </td>
                 </tr>
@@ -640,37 +708,66 @@ function DriversTab() {
                 onChange={(e) => setForm({ ...form, fullName: e.target.value })}
               />
             </div>
-            <div className="grid gap-1.5">
-              <Label>Phone</Label>
-              <Input
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="driver@example.com"
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Phone</Label>
+                <Input
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-[1fr_80px_140px] gap-3">
+              <div className="grid gap-1.5">
+                <Label>CDL number</Label>
+                <Input
+                  value={form.license_number}
+                  onChange={(e) => setForm({ ...form, license_number: e.target.value })}
+                  placeholder="D1234567"
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>State</Label>
+                <Input
+                  value={form.license_state}
+                  onChange={(e) =>
+                    setForm({ ...form, license_state: e.target.value.toUpperCase().slice(0, 2) })
+                  }
+                  placeholder="TX"
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Expires</Label>
+                <Input
+                  type="date"
+                  value={form.license_expiry}
+                  onChange={(e) => setForm({ ...form, license_expiry: e.target.value })}
+                />
+              </div>
             </div>
             {!editId && (
-              <>
-                <div className="grid gap-1.5">
-                  <Label>Email (for portal invite)</Label>
-                  <Input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  />
+              <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-3">
+                <div>
+                  <p className="text-sm font-medium">Send portal invite</p>
+                  <p className="text-xs text-muted-foreground">
+                    Email a sign-up link so they can use the Driver Portal.
+                  </p>
                 </div>
-                <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-3">
-                  <div>
-                    <p className="text-sm font-medium">Send portal invite</p>
-                    <p className="text-xs text-muted-foreground">
-                      Email a sign-up link so they can use the Driver Portal.
-                    </p>
-                  </div>
-                  <Switch
-                    checked={form.sendInvite}
-                    onCheckedChange={(v) => setForm({ ...form, sendInvite: v })}
-                    disabled={!form.email}
-                  />
-                </div>
-              </>
+                <Switch
+                  checked={form.sendInvite}
+                  onCheckedChange={(v) => setForm({ ...form, sendInvite: v })}
+                  disabled={!form.email}
+                />
+              </div>
             )}
           </div>
           <DialogFooter>
@@ -735,9 +832,9 @@ function VehiclesTab() {
       truck_number: v.truck_number,
       make: v.make ?? "",
       model: v.model ?? "",
-      year: "",
-      license_plate: "",
-      vin: "",
+      year: v.year ? String(v.year) : "",
+      license_plate: v.license_plate ?? "",
+      vin: v.vin ?? "",
       status: v.status,
     });
     setOpen(true);

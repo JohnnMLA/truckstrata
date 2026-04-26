@@ -9,6 +9,9 @@ export interface DBVehicle {
   truck_number: string;
   make: string | null;
   model: string | null;
+  year?: number | null;
+  license_plate?: string | null;
+  vin?: string | null;
   status: "active" | "idle" | "maintenance" | "out_of_service";
   current_lat: number | null;
   current_lng: number | null;
