@@ -6,8 +6,9 @@ import { VehicleCard } from "@/components/dashboard/VehicleCard";
 import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
 import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
+import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { Button } from "@/components/ui/button";
-import { Search, Bell, Plus, Loader2, Sparkles, Truck, Radio } from "lucide-react";
+import { Search, Plus, Loader2, Sparkles, Truck, Radio } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   useVehicles,
@@ -17,6 +18,7 @@ import {
   useRealtimeAlerts,
   useSimulateVehiclePings,
 } from "@/hooks/useFleetData";
+import { useRealtimeNotifications } from "@/hooks/useNotifications";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dispatch")({
@@ -41,9 +43,10 @@ function DispatchPage() {
   const seed = useSeedDemoFleet();
   const simulate = useSimulateVehiclePings();
 
-  // Subscribe to live vehicle + alert updates
+  // Subscribe to live vehicle + alert + notification updates
   useRealtimeVehicles();
   useRealtimeAlerts();
+  useRealtimeNotifications();
 
   const driversById = useMemo(
     () => Object.fromEntries((drivers ?? []).map((d) => [d.id, d])),
@@ -130,9 +133,7 @@ function DispatchPage() {
                 Simulate pings
               </Button>
             )}
-            <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition hover:text-foreground">
-              <Bell className="h-4 w-4" strokeWidth={1.8} />
-            </button>
+            <NotificationBell />
             <NewTripDialog />
           </div>
         </header>
