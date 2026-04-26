@@ -1,6 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import heroImg from "@/assets/hero-truck.jpg";
+import { Clock, TrendingDown, Truck } from "lucide-react";
+
+const stats = [
+  { icon: Clock, value: "10 min", label: "to onboard your first truck" },
+  { icon: TrendingDown, value: "50%", label: "lower total cost vs. Samsara" },
+  { icon: Truck, value: "1–50", label: "trucks supported on day one" },
+];
 
 export function Hero() {
   return (
@@ -30,10 +37,31 @@ export function Hero() {
                 Open the dashboard
               </Button>
             </Link>
-            <Button size="lg" variant="ghost" className="rounded-full px-7">
-              Watch 90s demo →
-            </Button>
+            <a href="#ai">
+              <Button size="lg" variant="ghost" className="rounded-full px-7">
+                See how AI helps →
+              </Button>
+            </a>
           </div>
+
+          <ul className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
+            {stats.map((s) => (
+              <li
+                key={s.label}
+                className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card/60 px-4 py-3 text-left backdrop-blur"
+              >
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <s.icon className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground">{s.value}</p>
+                  <p className="text-[11px] leading-tight text-muted-foreground">
+                    {s.label}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="mx-auto mt-16 max-w-6xl">

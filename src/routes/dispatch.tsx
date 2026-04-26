@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { FleetMap } from "@/components/dashboard/FleetMap";
@@ -7,6 +7,7 @@ import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
 import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
+import { WelcomeBanner } from "@/components/dashboard/WelcomeBanner";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, Loader2, Sparkles, Truck, Radio } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -140,6 +141,9 @@ function DispatchPage() {
           </div>
         </header>
 
+        {/* Welcome banner — shown until dismissed when there are no trips yet */}
+        <WelcomeBanner show={!vehiclesLoading && (trips ?? []).length === 0} />
+
         {/* KPI strip */}
         <div className="grid grid-cols-2 gap-3 px-6 pt-5 md:grid-cols-4">
           <Kpi label="Active trucks" value={`${active}`} sub={`of ${list.length}`} tone="success" />
@@ -170,9 +174,11 @@ function DispatchPage() {
                   )}
                   Load demo fleet
                 </Button>
-                <Button variant="outline" className="rounded-full">
-                  <Plus className="mr-2 h-4 w-4" /> Add truck
-                </Button>
+                <Link to="/settings">
+                  <Button variant="outline" className="rounded-full">
+                    <Plus className="mr-2 h-4 w-4" /> Add truck
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
