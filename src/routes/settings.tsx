@@ -493,12 +493,23 @@ function DriversTab() {
     fullName: "",
     email: "",
     phone: "",
+    license_number: "",
+    license_state: "",
+    license_expiry: "",
     sendInvite: true,
   });
 
   const onAdd = () => {
     setEditId(null);
-    setForm({ fullName: "", email: "", phone: "", sendInvite: true });
+    setForm({
+      fullName: "",
+      email: "",
+      phone: "",
+      license_number: "",
+      license_state: "",
+      license_expiry: "",
+      sendInvite: true,
+    });
     setOpen(true);
   };
 
@@ -508,8 +519,11 @@ function DriversTab() {
     setEditId(id);
     setForm({
       fullName: d.full_name,
-      email: "",
+      email: d.email ?? "",
       phone: d.phone ?? "",
+      license_number: d.license_number ?? "",
+      license_state: d.license_state ?? "",
+      license_expiry: d.license_expiry ?? "",
       sendInvite: false,
     });
     setOpen(true);
@@ -522,6 +536,10 @@ function DriversTab() {
           id: editId,
           full_name: form.fullName,
           phone: form.phone || null,
+          email: form.email || null,
+          license_number: form.license_number || null,
+          license_state: form.license_state || null,
+          license_expiry: form.license_expiry || null,
         });
         toast.success("Driver updated");
       } else {
@@ -531,6 +549,18 @@ function DriversTab() {
           phone: form.phone,
           sendInvite: form.sendInvite,
         });
+        // If license info was provided, save it now
+        if (
+          res.driverId &&
+          (form.license_number || form.license_state || form.license_expiry)
+        ) {
+          await updateD.mutateAsync({
+            id: res.driverId,
+            license_number: form.license_number || null,
+            license_state: form.license_state || null,
+            license_expiry: form.license_expiry || null,
+          });
+        }
         toast.success(
           res.invited
             ? `Driver added · invite sent to ${form.email}`
