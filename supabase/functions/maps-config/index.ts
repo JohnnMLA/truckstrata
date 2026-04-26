@@ -31,7 +31,7 @@ Deno.serve((req) => {
       ...corsHeaders,
       "Content-Type": "application/json",
       // Cache aggressively — key rarely changes.
-      "Cache-Control": "public, max-age=3600",
+      "Cache-Control": "private, no-store",
     },
   });
 });
