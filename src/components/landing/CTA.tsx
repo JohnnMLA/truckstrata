@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Twitter, Linkedin, ShieldCheck } from "lucide-react";
 
 const socialLinks = [
   { label: "Facebook", href: "https://facebook.com/truckstrata", Icon: Facebook },
@@ -23,13 +23,19 @@ export function CTA() {
           Get early access pricing for owner-operators and fleets under 50 trucks.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link to="/dispatch">
-            <Button size="lg" className="rounded-full px-8">Try the dashboard</Button>
+          <Link to="/auth">
+            <Button size="lg" className="rounded-full px-8">Start free trial</Button>
           </Link>
-          <Button size="lg" variant="outline" className="rounded-full px-8">
-            Talk to sales
-          </Button>
+          <a href="mailto:hello@truckstrata.com?subject=TruckStrata%20demo%20request">
+            <Button size="lg" variant="outline" className="rounded-full px-8">
+              Talk to sales
+            </Button>
+          </a>
         </div>
+        <p className="mt-6 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+          <ShieldCheck className="h-3.5 w-3.5" />
+          No credit card · Cancel anytime · Your data stays yours
+        </p>
       </div>
       <div className="mt-12 flex flex-col items-center gap-4">
         <div className="flex items-center gap-2">
