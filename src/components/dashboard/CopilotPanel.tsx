@@ -54,9 +54,21 @@ const categoryIcon: Record<Suggestion["category"], typeof Fuel> = {
 
 const STARTER_PROMPTS = [
   "Which truck needs attention first?",
+  "Any maintenance overdue?",
+  "Unassigned trips I should plan?",
   "Summarize today's open alerts.",
-  "Any unassigned trips I should plan?",
 ];
+
+// Routes the copilot is allowed to deep-link into.
+const APP_ROUTES = new Set([
+  "/trips",
+  "/maintenance",
+  "/schedule",
+  "/analytics",
+  "/driver",
+  "/dispatch",
+  "/settings",
+]);
 
 export function CopilotPanel() {
   const { user } = useAuth();
