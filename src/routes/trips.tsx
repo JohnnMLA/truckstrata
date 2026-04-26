@@ -142,6 +142,7 @@ function TripsPage() {
                     <th className="px-4 py-3 font-medium">Pickup</th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 text-right font-medium">Revenue</th>
+                    <th className="px-4 py-3 text-right font-medium" aria-label="Actions" />
                   </tr>
                 </thead>
                 <tbody>
@@ -194,6 +195,9 @@ function TripsPage() {
                           {typeof t.revenue_cents === "number"
                             ? `$${(t.revenue_cents / 100).toLocaleString()}`
                             : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <AssignTripDialog trip={t} />
                         </td>
                       </tr>
                     );
