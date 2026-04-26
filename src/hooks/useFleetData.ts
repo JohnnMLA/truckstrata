@@ -51,6 +51,7 @@ export interface DBTrip {
   driver_response_at?: string | null;
   actual_pickup_at?: string | null;
   actual_delivery_at?: string | null;
+  share_token?: string | null;
 }
 
 export interface DBAlert {
