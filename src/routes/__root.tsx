@@ -33,22 +33,18 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "TruckStrata" },
+      { name: "description", content: "TruckStrata AI is an AI-powered trucking operating system for small to midsize fleets." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "TruckStrata" },
+      { property: "og:description", content: "TruckStrata AI is an AI-powered trucking operating system for small to midsize fleets." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
-      // Security headers (meta-tag form; effective for clickjacking + referrer + permissions)
-      { httpEquiv: "X-Content-Type-Options", content: "nosniff" },
-      { httpEquiv: "Referrer-Policy", content: "strict-origin-when-cross-origin" },
-      { name: "referrer", content: "strict-origin-when-cross-origin" },
-      {
-        httpEquiv: "Permissions-Policy",
-        content: "camera=(self), microphone=(), geolocation=(self), payment=()",
-      },
+      { name: "twitter:title", content: "TruckStrata" },
+      { name: "twitter:description", content: "TruckStrata AI is an AI-powered trucking operating system for small to midsize fleets." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dae210a1-2bcc-4e32-bb75-53b9877e8f82/id-preview-c558493e--367201e1-09ea-4886-a9e5-5bcf4fbf3b59.lovable.app-1777169366761.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dae210a1-2bcc-4e32-bb75-53b9877e8f82/id-preview-c558493e--367201e1-09ea-4886-a9e5-5bcf4fbf3b59.lovable.app-1777169366761.png" },
     ],
     links: [
       {
