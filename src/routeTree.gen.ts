@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TripsRouteImport } from './routes/trips'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
+import { Route as MaintenanceRouteImport } from './routes/maintenance'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as DispatchRouteImport } from './routes/dispatch'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -32,6 +33,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ScheduleRoute = ScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaintenanceRoute = MaintenanceRouteImport.update({
+  id: '/maintenance',
+  path: '/maintenance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriverRoute = DriverRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
+  '/maintenance': typeof MaintenanceRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
+  '/maintenance': typeof MaintenanceRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
+  '/maintenance': typeof MaintenanceRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dispatch'
     | '/driver'
+    | '/maintenance'
     | '/schedule'
     | '/settings'
     | '/trips'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dispatch'
     | '/driver'
+    | '/maintenance'
     | '/schedule'
     | '/settings'
     | '/trips'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dispatch'
     | '/driver'
+    | '/maintenance'
     | '/schedule'
     | '/settings'
     | '/trips'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DispatchRoute: typeof DispatchRoute
   DriverRoute: typeof DriverRoute
+  MaintenanceRoute: typeof MaintenanceRoute
   ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
   TripsRoute: typeof TripsRoute
@@ -169,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/schedule'
       fullPath: '/schedule'
       preLoaderRoute: typeof ScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maintenance': {
+      id: '/maintenance'
+      path: '/maintenance'
+      fullPath: '/maintenance'
+      preLoaderRoute: typeof MaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/driver': {
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DispatchRoute: DispatchRoute,
   DriverRoute: DriverRoute,
+  MaintenanceRoute: MaintenanceRoute,
   ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
   TripsRoute: TripsRoute,
