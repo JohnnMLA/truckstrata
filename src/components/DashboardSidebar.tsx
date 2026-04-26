@@ -16,6 +16,7 @@ import {
   Smartphone,
   BarChart3,
   Wrench,
+  Download,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
@@ -27,6 +28,7 @@ const nav = [
   { label: "Driver portal", icon: Smartphone, to: "/driver" as const },
   { label: "Analytics", icon: BarChart3, to: "/analytics" as const },
   { label: "Maintenance", icon: Wrench, to: "/maintenance" as const },
+  { label: "Reports", icon: Download, to: "/reports" as const },
   { label: "Live map", icon: Map },
   { label: "Vehicles", icon: Truck },
   { label: "Drivers", icon: Users },

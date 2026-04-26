@@ -24,10 +24,14 @@ export interface DBDriver {
   organization_id: string;
   full_name: string;
   phone: string | null;
+  email?: string | null;
   status: "on_duty" | "off_duty" | "driving" | "sleeper" | "unavailable";
   current_vehicle_id: string | null;
   hos_remaining_minutes: number | null;
   user_id: string | null;
+  license_number?: string | null;
+  license_state?: string | null;
+  license_expiry?: string | null;
 }
 
 export interface DBTrip {
@@ -52,6 +56,7 @@ export interface DBTrip {
   actual_pickup_at?: string | null;
   actual_delivery_at?: string | null;
   share_token?: string | null;
+  created_at?: string | null;
 }
 
 export interface DBAlert {
