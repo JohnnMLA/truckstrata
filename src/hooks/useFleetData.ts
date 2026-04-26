@@ -27,6 +27,7 @@ export interface DBDriver {
   status: "on_duty" | "off_duty" | "driving" | "sleeper" | "unavailable";
   current_vehicle_id: string | null;
   hos_remaining_minutes: number | null;
+  user_id: string | null;
 }
 
 export interface DBTrip {
