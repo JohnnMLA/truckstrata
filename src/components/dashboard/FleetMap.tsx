@@ -126,7 +126,7 @@ function FleetMapInner({
 
   return (
     <>
-      <Map
+      <GoogleMap
         mapId={MAP_ID}
         defaultCenter={US_CENTER}
         defaultZoom={4}
@@ -155,7 +155,7 @@ function FleetMapInner({
             />
           );
         })}
-      </Map>
+      </GoogleMap>
 
       {/* Overlay: live status pill */}
       <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur">
