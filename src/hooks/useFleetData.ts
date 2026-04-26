@@ -34,7 +34,11 @@ export interface DBTrip {
   organization_id: string;
   reference: string | null;
   origin_label: string;
+  origin_lat?: number | null;
+  origin_lng?: number | null;
   destination_label: string;
+  destination_lat?: number | null;
+  destination_lng?: number | null;
   status: "planned" | "assigned" | "in_transit" | "delivered" | "cancelled" | "delayed";
   vehicle_id: string | null;
   driver_id: string | null;
