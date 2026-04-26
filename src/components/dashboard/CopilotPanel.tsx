@@ -18,6 +18,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
