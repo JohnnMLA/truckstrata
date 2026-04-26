@@ -1,19 +1,21 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   APIProvider,
-  Map,
+  Map as GoogleMap,
   AdvancedMarker,
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { Truck, Loader2, AlertTriangle } from "lucide-react";
-import type { DBVehicle } from "@/hooks/useFleetData";
+import { Truck, Loader2, AlertTriangle, Clock } from "lucide-react";
+import type { DBTrip, DBVehicle } from "@/hooks/useFleetData";
 import { vehicleUiStatus } from "./VehicleCard";
 import { supabase } from "@/integrations/supabase/client";
+import { RouteOverlay, type TripEta } from "./RouteOverlay";
 
 interface Props {
   vehicles: DBVehicle[];
+  trips?: DBTrip[];
   selectedId?: string;
   onSelect: (id: string) => void;
 }
@@ -23,7 +25,7 @@ const MAP_ID = "truckstrata_fleet_map";
 // Center of contiguous US — used as fallback when no vehicles have coordinates.
 const US_CENTER = { lat: 39.5, lng: -98.35 };
 
-export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
+export function FleetMap({ vehicles, trips = [], selectedId, onSelect }: Props) {
   const keyQuery = useQuery({
     queryKey: ["maps-config"],
     staleTime: Infinity,
@@ -82,26 +84,78 @@ export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
   return (
     <MapShell>
       <APIProvider apiKey={keyQuery.data}>
-        <Map
-          mapId={MAP_ID}
-          defaultCenter={US_CENTER}
-          defaultZoom={4}
-          gestureHandling="greedy"
-          disableDefaultUI={false}
-          clickableIcons={false}
-          className="h-full w-full"
-        >
-          <FitBounds vehicles={positioned} selectedId={selectedId} />
-          {positioned.map((v) => (
+        <FleetMapInner
+          vehicles={vehicles}
+          positioned={positioned}
+          trips={trips}
+          selectedId={selectedId}
+          onSelect={onSelect}
+          liveCount={liveCount}
+        />
+      </APIProvider>
+    </MapShell>
+  );
+}
+
+function FleetMapInner({
+  vehicles,
+  positioned,
+  trips,
+  selectedId,
+  onSelect,
+  liveCount,
+}: {
+  vehicles: DBVehicle[];
+  positioned: DBVehicle[];
+  trips: DBTrip[];
+  selectedId?: string;
+  onSelect: (id: string) => void;
+  liveCount: number;
+}) {
+  const [etas, setEtas] = useState<Map<string, TripEta>>(new Map());
+  const tripByVehicle = useMemo(() => {
+    const m = new Map<string, DBTrip>();
+    for (const t of trips) {
+      if (t.status === "in_transit" && t.vehicle_id) m.set(t.vehicle_id, t);
+    }
+    return m;
+  }, [trips]);
+  const handleEtas = useCallback((next: Map<string, TripEta>) => setEtas(next), []);
+
+  const delayed = Array.from(etas.values()).filter((e) => e.isDelayed).length;
+
+  return (
+    <>
+      <GoogleMap
+        mapId={MAP_ID}
+        defaultCenter={US_CENTER}
+        defaultZoom={4}
+        gestureHandling="greedy"
+        disableDefaultUI={false}
+        clickableIcons={false}
+        className="h-full w-full"
+      >
+        <FitBounds vehicles={positioned} selectedId={selectedId} />
+        <RouteOverlay
+          vehicles={positioned}
+          trips={trips}
+          selectedVehicleId={selectedId}
+          onEtas={handleEtas}
+        />
+        {positioned.map((v) => {
+          const trip = tripByVehicle.get(v.id);
+          const eta = trip ? etas.get(trip.id) : undefined;
+          return (
             <VehicleMarker
               key={v.id}
               vehicle={v}
+              eta={eta}
               selected={v.id === selectedId}
               onSelect={() => onSelect(v.id)}
             />
-          ))}
-        </Map>
-      </APIProvider>
+          );
+        })}
+      </GoogleMap>
 
       {/* Overlay: live status pill */}
       <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur">
@@ -109,8 +163,14 @@ export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
         </span>
         Live · {liveCount} of {vehicles.length} active
+        {delayed > 0 && (
+          <>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-destructive">{delayed} delayed</span>
+          </>
+        )}
       </div>
-    </MapShell>
+    </>
   );
 }
 
@@ -126,10 +186,12 @@ function VehicleMarker({
   vehicle,
   selected,
   onSelect,
+  eta,
 }: {
   vehicle: DBVehicle;
   selected: boolean;
   onSelect: () => void;
+  eta?: TripEta;
 }) {
   const status = vehicleUiStatus(vehicle);
   const target = {
@@ -218,6 +280,20 @@ function VehicleMarker({
                 </>
               )}
             </div>
+            {eta && (
+              <div
+                className={`mt-2 flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium ${
+                  eta.isDelayed
+                    ? "border-destructive/30 bg-destructive/5 text-destructive"
+                    : "border-border/60 bg-muted/40 text-foreground"
+                }`}
+              >
+                <Clock className="h-3 w-3" />
+                {eta.isDelayed
+                  ? `${eta.delayedMinutes} min late · ETA ${formatEta(eta.etaIso)}`
+                  : `ETA ${formatEta(eta.etaIso)} · ${formatDuration(eta.durationSeconds)}`}
+              </div>
+            )}
           </div>
         </InfoWindow>
       )}
@@ -267,4 +343,25 @@ function FitBounds({
   }, [map, selectedId, vehicles]);
 
   return null;
+}
+
+function formatEta(iso: string) {
+  const d = new Date(iso);
+  const today = new Date();
+  const sameDay =
+    d.getFullYear() === today.getFullYear() &&
+    d.getMonth() === today.getMonth() &&
+    d.getDate() === today.getDate();
+  return d.toLocaleString(undefined, {
+    month: sameDay ? undefined : "short",
+    day: sameDay ? undefined : "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function formatDuration(sec: number) {
+  const h = Math.floor(sec / 3600);
+  const m = Math.round((sec % 3600) / 60);
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
