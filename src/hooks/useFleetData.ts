@@ -42,6 +42,10 @@ export interface DBTrip {
   scheduled_delivery_at: string | null;
   distance_miles: number | null;
   revenue_cents: number | null;
+  driver_response?: "pending" | "accepted" | "declined";
+  driver_response_at?: string | null;
+  actual_pickup_at?: string | null;
+  actual_delivery_at?: string | null;
 }
 
 export interface DBAlert {
