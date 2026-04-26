@@ -305,7 +305,7 @@ function ActiveTripCard({ trip }: { trip: DBDriverTrip }) {
       <RouteBlock trip={trip} />
       <TripMeta trip={trip} />
 
-      <div className="mt-4">
+      <div className="mt-4 space-y-2">
         {stage === "ready" && (
           <Button className="w-full rounded-full" disabled={busy} onClick={() => go("start_pickup")}>
             {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlayCircle className="mr-2 h-4 w-4" />}
@@ -318,6 +318,18 @@ function ActiveTripCard({ trip }: { trip: DBDriverTrip }) {
             Mark delivered
           </Button>
         )}
+        <TripDocumentsDialog
+          tripId={trip.id}
+          organizationId={trip.organization_id}
+          tripLabel={`${trip.origin_label} → ${trip.destination_label}`}
+          allowedKinds={["pod", "photo", "bol", "other"]}
+          trigger={
+            <Button variant="outline" className="w-full rounded-full">
+              <FileText className="mr-2 h-4 w-4" />
+              Documents &amp; photos
+            </Button>
+          }
+        />
       </div>
     </article>
   );
