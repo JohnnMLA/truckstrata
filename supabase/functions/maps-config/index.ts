@@ -8,6 +8,16 @@ const corsHeaders = {
 Deno.serve((req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  // Defense-in-depth: verify_jwt=true in config.toml already blocks unauthenticated
+  // requests at the gateway, but we double-check here in case config drifts.
+  const authHeader = req.headers.get("Authorization") ?? "";
+  if (!authHeader.toLowerCase().startsWith("bearer ")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const apiKey = Deno.env.get("GOOGLE_MAPS_API_KEY");
   if (!apiKey) {
     return new Response(JSON.stringify({ error: "GOOGLE_MAPS_API_KEY not configured" }), {
