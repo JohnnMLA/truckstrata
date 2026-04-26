@@ -658,28 +658,29 @@ function DriversTab() {
                         </span>
                       )}
                     </td>
-                  <td className="px-4 py-3 text-right">
-                    <Button variant="ghost" size="icon" onClick={() => onEdit(d.id)}>
-                      <Pencil className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        deleteD
-                          .mutateAsync(d.id)
-                          .then(() => toast.success("Driver removed"))
-                          .catch((e) => toast.error((e as Error).message))
-                      }
-                    >
-                      <Trash2 className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+                    <td className="px-4 py-3 text-right">
+                      <Button variant="ghost" size="icon" onClick={() => onEdit(d.id)}>
+                        <Pencil className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          deleteD
+                            .mutateAsync(d.id)
+                            .then(() => toast.success("Driver removed"))
+                            .catch((e) => toast.error((e as Error).message))
+                        }
+                      >
+                        <Trash2 className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
               {(drivers ?? []).length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
                     No drivers yet.
                   </td>
                 </tr>
