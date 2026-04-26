@@ -195,12 +195,12 @@ function AnalyticsPage() {
   }, [current]);
 
   const STATUS_COLORS: Record<string, string> = {
-    delivered: "hsl(var(--success))",
-    in_transit: "hsl(var(--primary))",
-    assigned: "hsl(var(--primary) / 0.5)",
-    planned: "hsl(var(--muted-foreground) / 0.5)",
-    delayed: "hsl(var(--warning))",
-    cancelled: "hsl(var(--muted-foreground) / 0.3)",
+    delivered: "var(--success)",
+    in_transit: "var(--primary)",
+    assigned: "color-mix(in oklab, var(--primary) 50%, transparent)",
+    planned: "color-mix(in oklab, var(--muted-foreground) 50%, transparent)",
+    delayed: "var(--warning)",
+    cancelled: "color-mix(in oklab, var(--muted-foreground) 30%, transparent)",
   };
 
   // Per-truck performance
@@ -330,27 +330,27 @@ function AnalyticsPage() {
                     <AreaChart data={series} margin={{ left: 4, right: 4, top: 8 }}>
                       <defs>
                         <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                          <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.35} />
+                          <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                       <XAxis
                         dataKey="date"
-                        tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                        tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                         axisLine={false}
                         tickLine={false}
                       />
                       <YAxis
-                        tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                        tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                         axisLine={false}
                         tickLine={false}
                         tickFormatter={(v) => `$${Math.round(v / 1000)}k`}
                       />
                       <Tooltip
                         contentStyle={{
-                          background: "hsl(var(--card))",
-                          border: "1px solid hsl(var(--border))",
+                          background: "var(--card)",
+                          border: "1px solid var(--border)",
                           borderRadius: 12,
                           fontSize: 12,
                         }}
@@ -359,7 +359,7 @@ function AnalyticsPage() {
                       <Area
                         type="monotone"
                         dataKey="revenue"
-                        stroke="hsl(var(--primary))"
+                        stroke="var(--primary)"
                         strokeWidth={2}
                         fill="url(#revenueFill)"
                       />
@@ -393,8 +393,8 @@ function AnalyticsPage() {
                         </Pie>
                         <Tooltip
                           contentStyle={{
-                            background: "hsl(var(--card))",
-                            border: "1px solid hsl(var(--border))",
+                            background: "var(--card)",
+                            border: "1px solid var(--border)",
                             borderRadius: 12,
                             fontSize: 12,
                           }}
@@ -417,28 +417,28 @@ function AnalyticsPage() {
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={series} margin={{ left: 4, right: 4, top: 8 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                       <XAxis
                         dataKey="date"
-                        tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                        tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                         axisLine={false}
                         tickLine={false}
                       />
                       <YAxis
-                        tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                        tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                         axisLine={false}
                         tickLine={false}
                       />
                       <Tooltip
                         contentStyle={{
-                          background: "hsl(var(--card))",
-                          border: "1px solid hsl(var(--border))",
+                          background: "var(--card)",
+                          border: "1px solid var(--border)",
                           borderRadius: 12,
                           fontSize: 12,
                         }}
                         formatter={(v: number) => [`${v.toLocaleString()} mi`, "Miles"]}
                       />
-                      <Bar dataKey="miles" fill="hsl(var(--primary) / 0.7)" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="miles" fill="color-mix(in oklab, var(--primary) 70%, transparent)" radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
