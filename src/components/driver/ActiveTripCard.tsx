@@ -128,6 +128,13 @@ export function ActiveTripCard({ trip, driverId, vehicleId }: Props) {
             </Button>
           }
         />
+
+        <ReportIssueDialog
+          tripId={trip.id}
+          organizationId={trip.organization_id}
+          driverId={driverId}
+          vehicleId={vehicleId}
+        />
       </div>
     </article>
   );
