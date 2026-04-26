@@ -16,13 +16,30 @@ export const Route = createFileRoute("/api/public/hooks/send-reminders")({
     handlers: {
       POST: async ({ request }) => {
         const auth = request.headers.get("authorization");
-        if (!auth?.startsWith("Bearer ")) {
+        const token = auth?.toLowerCase().startsWith("bearer ")
+          ? auth.slice(7).trim()
+          : null;
+        if (!token) {
           return json({ error: "Missing authorization" }, 401);
         }
         const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        const anonKey =
+          process.env.SUPABASE_ANON_KEY ??
+          process.env.SUPABASE_PUBLISHABLE_KEY ??
+          process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
         if (!url || !serviceKey) {
           return json({ error: "Server not configured" }, 500);
+        }
+        // Constant-time-ish check: token must match either the anon/publishable
+        // key or the service role key. Without this, anyone hitting the public
+        // route with any Bearer string could trigger reminder dispatch.
+        const expected = [anonKey, serviceKey].filter(Boolean) as string[];
+        const ok = expected.some(
+          (k) => k.length === token.length && timingSafeEqual(k, token),
+        );
+        if (!ok) {
+          return json({ error: "Unauthorized" }, 401);
         }
         const supabase = createClient(url, serviceKey, {
           auth: { autoRefreshToken: false, persistSession: false },
@@ -51,4 +68,14 @@ function json(body: unknown, status = 200) {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+/** Length-constant string comparison to avoid leaking key bytes via timing. */
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i++) {
+    mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return mismatch === 0;
 }
