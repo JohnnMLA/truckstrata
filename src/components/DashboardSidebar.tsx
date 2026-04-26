@@ -90,13 +90,17 @@ export function DashboardSidebar() {
       </nav>
 
       <div className="mt-auto space-y-1">
-        <button
-          type="button"
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-card hover:text-foreground"
+        <Link
+          to="/settings"
+          className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition ${
+            location.pathname === "/settings"
+              ? "bg-card text-foreground shadow-[var(--shadow-soft)]"
+              : "text-muted-foreground hover:bg-card hover:text-foreground"
+          }`}
         >
           <Settings className="h-[18px] w-[18px]" strokeWidth={1.8} />
           Settings
-        </button>
+        </Link>
 
         <div className="mt-2 flex items-center gap-3 rounded-xl border border-border/60 bg-card p-2.5">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
