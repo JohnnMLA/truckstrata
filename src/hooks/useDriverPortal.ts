@@ -151,7 +151,7 @@ export function useUpdateTripProgress() {
     mutationFn: async ({ trip, action }: StatusInput) => {
       if (!driver) throw new Error("No driver profile linked to this account");
       const now = new Date().toISOString();
-      const update: Record<string, unknown> = {};
+      const update: TripUpdate = {};
       let label = "";
 
       if (action === "start_pickup") {
