@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 import type { DBTrip, DBDriver, DBVehicle } from "./useFleetData";
 
 export type DriverResponse = "pending" | "accepted" | "declined";
@@ -10,7 +11,11 @@ export type DriverResponse = "pending" | "accepted" | "declined";
 export interface DBDriverTrip extends DBTrip {
   driver_response: DriverResponse;
   driver_response_at: string | null;
+  actual_pickup_at: string | null;
+  actual_delivery_at: string | null;
 }
+
+type TripUpdate = TablesUpdate<"trips">;
 
 /**
  * Returns the driver row linked to the currently authenticated user, if any.
