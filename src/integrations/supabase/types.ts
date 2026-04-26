@@ -335,6 +335,66 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_documents: {
+        Row: {
+          content_type: string | null
+          created_at: string
+          file_name: string
+          id: string
+          kind: Database["public"]["Enums"]["trip_document_kind"]
+          notes: string | null
+          organization_id: string
+          size_bytes: number | null
+          storage_path: string
+          trip_id: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          content_type?: string | null
+          created_at?: string
+          file_name: string
+          id?: string
+          kind?: Database["public"]["Enums"]["trip_document_kind"]
+          notes?: string | null
+          organization_id: string
+          size_bytes?: number | null
+          storage_path: string
+          trip_id: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          content_type?: string | null
+          created_at?: string
+          file_name?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["trip_document_kind"]
+          notes?: string | null
+          organization_id?: string
+          size_bytes?: number | null
+          storage_path?: string
+          trip_id?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_documents_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trips: {
         Row: {
           actual_delivery_at: string | null
@@ -581,6 +641,7 @@ export type Database = {
         | "unavailable"
       notification_type: "trip_assignment" | "trip_reminder" | "info"
       org_plan: "trial" | "starter" | "pro" | "enterprise"
+      trip_document_kind: "bol" | "pod" | "invoice" | "photo" | "other"
       trip_status:
         | "planned"
         | "assigned"
@@ -746,6 +807,7 @@ export const Constants = {
       ],
       notification_type: ["trip_assignment", "trip_reminder", "info"],
       org_plan: ["trial", "starter", "pro", "enterprise"],
+      trip_document_kind: ["bol", "pod", "invoice", "photo", "other"],
       trip_status: [
         "planned",
         "assigned",
