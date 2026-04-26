@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TripsRouteImport } from './routes/trips'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as MaintenanceRouteImport } from './routes/maintenance'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as DispatchRouteImport } from './routes/dispatch'
@@ -35,6 +36,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ScheduleRoute = ScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MaintenanceRoute = MaintenanceRouteImport.update({
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
+  '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
+  '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
+  '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/dispatch'
     | '/driver'
     | '/maintenance'
+    | '/reports'
     | '/schedule'
     | '/settings'
     | '/trips'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/dispatch'
     | '/driver'
     | '/maintenance'
+    | '/reports'
     | '/schedule'
     | '/settings'
     | '/trips'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/dispatch'
     | '/driver'
     | '/maintenance'
+    | '/reports'
     | '/schedule'
     | '/settings'
     | '/trips'
@@ -180,6 +192,7 @@ export interface RootRouteChildren {
   DispatchRoute: typeof DispatchRoute
   DriverRoute: typeof DriverRoute
   MaintenanceRoute: typeof MaintenanceRoute
+  ReportsRoute: typeof ReportsRoute
   ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
   TripsRoute: typeof TripsRoute
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/schedule'
       fullPath: '/schedule'
       preLoaderRoute: typeof ScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maintenance': {
@@ -284,6 +304,7 @@ const rootRouteChildren: RootRouteChildren = {
   DispatchRoute: DispatchRoute,
   DriverRoute: DriverRoute,
   MaintenanceRoute: MaintenanceRoute,
+  ReportsRoute: ReportsRoute,
   ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
   TripsRoute: TripsRoute,
@@ -293,3 +314,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
