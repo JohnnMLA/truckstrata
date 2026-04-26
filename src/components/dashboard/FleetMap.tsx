@@ -84,26 +84,78 @@ export function FleetMap({ vehicles, trips = [], selectedId, onSelect }: Props) 
   return (
     <MapShell>
       <APIProvider apiKey={keyQuery.data}>
-        <Map
-          mapId={MAP_ID}
-          defaultCenter={US_CENTER}
-          defaultZoom={4}
-          gestureHandling="greedy"
-          disableDefaultUI={false}
-          clickableIcons={false}
-          className="h-full w-full"
-        >
-          <FitBounds vehicles={positioned} selectedId={selectedId} />
-          {positioned.map((v) => (
+        <FleetMapInner
+          vehicles={vehicles}
+          positioned={positioned}
+          trips={trips}
+          selectedId={selectedId}
+          onSelect={onSelect}
+          liveCount={liveCount}
+        />
+      </APIProvider>
+    </MapShell>
+  );
+}
+
+function FleetMapInner({
+  vehicles,
+  positioned,
+  trips,
+  selectedId,
+  onSelect,
+  liveCount,
+}: {
+  vehicles: DBVehicle[];
+  positioned: DBVehicle[];
+  trips: DBTrip[];
+  selectedId?: string;
+  onSelect: (id: string) => void;
+  liveCount: number;
+}) {
+  const [etas, setEtas] = useState<Map<string, TripEta>>(new Map());
+  const tripByVehicle = useMemo(() => {
+    const m = new Map<string, DBTrip>();
+    for (const t of trips) {
+      if (t.status === "in_transit" && t.vehicle_id) m.set(t.vehicle_id, t);
+    }
+    return m;
+  }, [trips]);
+  const handleEtas = useCallback((next: Map<string, TripEta>) => setEtas(next), []);
+
+  const delayed = Array.from(etas.values()).filter((e) => e.isDelayed).length;
+
+  return (
+    <>
+      <Map
+        mapId={MAP_ID}
+        defaultCenter={US_CENTER}
+        defaultZoom={4}
+        gestureHandling="greedy"
+        disableDefaultUI={false}
+        clickableIcons={false}
+        className="h-full w-full"
+      >
+        <FitBounds vehicles={positioned} selectedId={selectedId} />
+        <RouteOverlay
+          vehicles={positioned}
+          trips={trips}
+          selectedVehicleId={selectedId}
+          onEtas={handleEtas}
+        />
+        {positioned.map((v) => {
+          const trip = tripByVehicle.get(v.id);
+          const eta = trip ? etas.get(trip.id) : undefined;
+          return (
             <VehicleMarker
               key={v.id}
               vehicle={v}
+              eta={eta}
               selected={v.id === selectedId}
               onSelect={() => onSelect(v.id)}
             />
-          ))}
-        </Map>
-      </APIProvider>
+          );
+        })}
+      </Map>
 
       {/* Overlay: live status pill */}
       <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur">
@@ -111,8 +163,14 @@ export function FleetMap({ vehicles, trips = [], selectedId, onSelect }: Props) 
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
         </span>
         Live · {liveCount} of {vehicles.length} active
+        {delayed > 0 && (
+          <>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-destructive">{delayed} delayed</span>
+          </>
+        )}
       </div>
-    </MapShell>
+    </>
   );
 }
 
@@ -128,10 +186,12 @@ function VehicleMarker({
   vehicle,
   selected,
   onSelect,
+  eta,
 }: {
   vehicle: DBVehicle;
   selected: boolean;
   onSelect: () => void;
+  eta?: TripEta;
 }) {
   const status = vehicleUiStatus(vehicle);
   const target = {
