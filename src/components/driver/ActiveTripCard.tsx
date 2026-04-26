@@ -25,7 +25,7 @@ interface Props {
  * action as a large primary button (Confirm pickup → Mark delivered),
  * plus quick photo capture and an in-app navigation handoff.
  */
-export function ActiveTripCard({ trip }: Props) {
+export function ActiveTripCard({ trip, driverId, vehicleId }: Props) {
   const update = useUpdateTripProgress();
   const [busy, setBusy] = useState(false);
 
