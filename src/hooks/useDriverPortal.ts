@@ -90,7 +90,10 @@ export function useRespondToTrip() {
     mutationFn: async ({ trip, response, reason }: RespondInput) => {
       if (!driver) throw new Error("No driver profile linked to this account");
 
-      const tripUpdate: Record<string, unknown> = {
+      const tripUpdate: TripUpdate & {
+        driver_response?: DriverResponse;
+        driver_response_at?: string | null;
+      } = {
         driver_response: response,
         driver_response_at: new Date().toISOString(),
       };
@@ -102,7 +105,7 @@ export function useRespondToTrip() {
 
       const { error: tripErr } = await supabase
         .from("trips")
-        .update(tripUpdate)
+        .update(tripUpdate as TripUpdate)
         .eq("id", trip.id);
       if (tripErr) throw tripErr;
 
