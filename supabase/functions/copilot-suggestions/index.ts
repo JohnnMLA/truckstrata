@@ -78,15 +78,15 @@ Deno.serve(async (req) => {
     });
 
     // RLS scopes everything to the caller's organization automatically.
-    const [vehiclesRes, driversRes, tripsRes, alertsRes] = await Promise.all([
+    const [vehiclesRes, driversRes, tripsRes, alertsRes, maintRes] = await Promise.all([
       supabase
         .from("vehicles")
         .select(
-          "id, truck_number, status, current_location_label, fuel_level_pct, last_ping_at, current_driver_id",
+          "id, truck_number, status, current_location_label, fuel_level_pct, last_ping_at, current_driver_id, odometer_miles",
         ),
       supabase
         .from("drivers")
-        .select("id, full_name, status, hos_remaining_minutes, current_vehicle_id"),
+        .select("id, full_name, status, hos_remaining_minutes, current_vehicle_id, license_expiry"),
       supabase
         .from("trips")
         .select(
@@ -100,12 +100,18 @@ Deno.serve(async (req) => {
         .eq("resolved", false)
         .order("created_at", { ascending: false })
         .limit(10),
+      supabase
+        .from("maintenance_schedules")
+        .select("id, vehicle_id, kind, label, next_due_at, next_due_miles, last_service_at")
+        .order("next_due_at", { ascending: true, nullsFirst: false })
+        .limit(20),
     ]);
 
     if (vehiclesRes.error) throw vehiclesRes.error;
     if (driversRes.error) throw driversRes.error;
     if (tripsRes.error) throw tripsRes.error;
     if (alertsRes.error) throw alertsRes.error;
+    if (maintRes.error) throw maintRes.error;
 
     const fleetSnapshot = {
       generated_at: new Date().toISOString(),
@@ -113,6 +119,7 @@ Deno.serve(async (req) => {
       drivers: driversRes.data ?? [],
       recent_trips: tripsRes.data ?? [],
       open_alerts: alertsRes.data ?? [],
+      maintenance_schedules: maintRes.data ?? [],
     };
 
     if (fleetSnapshot.vehicles.length === 0) {
@@ -123,15 +130,15 @@ Deno.serve(async (req) => {
     }
 
     const systemPrompt = `You are TruckStrata's AI Dispatch Copilot, an expert fleet operator.
-You receive a JSON snapshot of a trucking fleet (vehicles, drivers, trips, alerts) and produce exactly 3 high-impact, actionable suggestions.
+You receive a JSON snapshot of a trucking fleet (vehicles, drivers, trips, alerts, maintenance schedules) and produce exactly 3 high-impact, actionable suggestions.
 
 Rules:
 - Reference real truck numbers (e.g. TRK-204) and driver names from the data.
-- Cite real numbers: fuel %, HOS minutes, distances, revenue.
-- Prioritize: critical safety/HOS > low fuel > unassigned trips > efficiency.
+- Cite real numbers: fuel %, HOS minutes, distances, revenue, miles to next service, days until DOT.
+- Prioritize: critical safety/HOS > overdue maintenance > low fuel > unassigned trips > efficiency.
 - Each suggestion must be something a dispatcher can act on in the next hour.
 - Tags should match category: route → "Route Copilot", dispatch → "Dispatch Copilot", fuel → "Fuel Copilot", maintenance → "Maintenance Copilot", safety → "Safety Copilot", document → "Document Copilot".
-- CTAs are short verbs: Reroute, Assign, Refuel, Schedule, Resolve, Process.
+- CTAs are short verbs: Reroute, Assign, Refuel, Schedule, Resolve, Process, Service.
 - If data is sparse, still produce 3 plausible operational suggestions grounded in what's there.
 - Always call the emit_dispatch_suggestions tool. Never reply in plain text.`;
 

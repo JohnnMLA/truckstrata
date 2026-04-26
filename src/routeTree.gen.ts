@@ -15,6 +15,7 @@ import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as MaintenanceRouteImport } from './routes/maintenance'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as DispatchRouteImport } from './routes/dispatch'
+import { Route as CopilotsRouteImport } from './routes/copilots'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
@@ -50,6 +51,11 @@ const DispatchRoute = DispatchRouteImport.update({
   path: '/dispatch',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CopilotsRoute = CopilotsRouteImport.update({
+  id: '/copilots',
+  path: '/copilots',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/copilots': typeof CopilotsRoute
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/copilots': typeof CopilotsRoute
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/copilots': typeof CopilotsRoute
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
+    | '/copilots'
     | '/dispatch'
     | '/driver'
     | '/maintenance'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
+    | '/copilots'
     | '/dispatch'
     | '/driver'
     | '/maintenance'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
+    | '/copilots'
     | '/dispatch'
     | '/driver'
     | '/maintenance'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
+  CopilotsRoute: typeof CopilotsRoute
   DispatchRoute: typeof DispatchRoute
   DriverRoute: typeof DriverRoute
   MaintenanceRoute: typeof MaintenanceRoute
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DispatchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/copilots': {
+      id: '/copilots'
+      path: '/copilots'
+      fullPath: '/copilots'
+      preLoaderRoute: typeof CopilotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
+  CopilotsRoute: CopilotsRoute,
   DispatchRoute: DispatchRoute,
   DriverRoute: DriverRoute,
   MaintenanceRoute: MaintenanceRoute,
