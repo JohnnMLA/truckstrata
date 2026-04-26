@@ -371,7 +371,38 @@ export function CopilotPanel() {
                     </div>
                   ) : m.role === "assistant" ? (
                     <div className="prose prose-sm max-w-none text-sm leading-relaxed [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-xs [&_p]:my-1 [&_ul]:my-1 [&_ul]:pl-4 [&_ol]:my-1 [&_ol]:pl-4 [&_li]:my-0.5 [&_strong]:font-semibold [&_strong]:text-foreground">
-                      <ReactMarkdown>{m.content}</ReactMarkdown>
+                      <ReactMarkdown
+                        components={{
+                          a: ({ href, children, ...props }) => {
+                            const isInternal =
+                              typeof href === "string" && APP_ROUTES.has(href);
+                            if (isInternal) {
+                              return (
+                                <Link
+                                  to={href as "/trips"}
+                                  className="my-1 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary no-underline transition hover:bg-primary/15"
+                                >
+                                  {children}
+                                  <ArrowRight className="h-3 w-3" />
+                                </Link>
+                              );
+                            }
+                            return (
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary underline"
+                                {...props}
+                              >
+                                {children}
+                              </a>
+                            );
+                          },
+                        }}
+                      >
+                        {m.content}
+                      </ReactMarkdown>
                     </div>
                   ) : (
                     <p className="whitespace-pre-wrap">{m.content}</p>
