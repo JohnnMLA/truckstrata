@@ -5,6 +5,7 @@ import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { AssignTripDialog } from "@/components/dashboard/AssignTripDialog";
+import { TripDocumentsDialog } from "@/components/dashboard/TripDocumentsDialog";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import {
@@ -213,7 +214,14 @@ function TripsPage() {
                             : "—"}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <AssignTripDialog trip={t} />
+                          <div className="flex items-center justify-end gap-1">
+                            <TripDocumentsDialog
+                              tripId={t.id}
+                              organizationId={t.organization_id}
+                              tripLabel={`${t.origin_label} → ${t.destination_label}`}
+                            />
+                            <AssignTripDialog trip={t} />
+                          </div>
                         </td>
                       </tr>
                     );
