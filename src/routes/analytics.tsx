@@ -74,6 +74,52 @@ function deltaPct(current: number, previous: number) {
   return ((current - previous) / previous) * 100;
 }
 
+function exportTripsCsv(trips: AnalyticsTrip[], days: number) {
+  const headers = [
+    "trip_id",
+    "created_at",
+    "status",
+    "vehicle_id",
+    "driver_id",
+    "distance_miles",
+    "revenue_usd",
+    "scheduled_delivery_at",
+    "actual_delivery_at",
+    "actual_pickup_at",
+  ];
+  const escape = (v: string | number | null) => {
+    if (v == null) return "";
+    const s = String(v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const rows = trips.map((t) =>
+    [
+      t.id,
+      t.created_at,
+      t.status,
+      t.vehicle_id,
+      t.driver_id,
+      t.distance_miles ?? "",
+      t.revenue_cents != null ? (t.revenue_cents / 100).toFixed(2) : "",
+      t.scheduled_delivery_at,
+      t.actual_delivery_at,
+      t.actual_pickup_at,
+    ]
+      .map(escape)
+      .join(","),
+  );
+  const csv = [headers.join(","), ...rows].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `truckstrata-trips-${days}d-${format(new Date(), "yyyy-MM-dd")}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 function AnalyticsPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
