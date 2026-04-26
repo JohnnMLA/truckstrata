@@ -834,7 +834,39 @@ export type Database = {
     }
     Functions: {
       get_current_driver_id: { Args: { _user_id: string }; Returns: string }
+      get_trip_by_share_token: {
+        Args: { _token: string }
+        Returns: {
+          actual_delivery_at: string
+          actual_pickup_at: string
+          destination_label: string
+          destination_lat: number
+          destination_lng: number
+          distance_miles: number
+          id: string
+          origin_label: string
+          origin_lat: number
+          origin_lng: number
+          reference: string
+          scheduled_delivery_at: string
+          scheduled_pickup_at: string
+          status: Database["public"]["Enums"]["trip_status"]
+          vehicle_id: string
+        }[]
+      }
       get_user_org: { Args: { _user_id: string }; Returns: string }
+      get_vehicle_by_share_token: {
+        Args: { _token: string }
+        Returns: {
+          current_lat: number
+          current_lng: number
+          current_location_label: string
+          last_ping_at: string
+          make: string
+          model: string
+          truck_number: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -846,6 +878,7 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      is_org_owner: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       alert_severity: "info" | "warning" | "critical"

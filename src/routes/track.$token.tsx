@@ -75,29 +75,25 @@ function PublicTrackPage() {
     let cancelled = false;
     async function load() {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("trips")
-        .select(
-          "id, reference, origin_label, destination_label, origin_lat, origin_lng, destination_lat, destination_lng, status, scheduled_pickup_at, scheduled_delivery_at, actual_pickup_at, actual_delivery_at, distance_miles, vehicle_id",
-        )
-        .eq("share_token", token)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("get_trip_by_share_token", {
+        _token: token,
+      });
       if (cancelled) return;
-      if (error || !data) {
+      const tripRow = Array.isArray(data) ? data[0] : null;
+      if (error || !tripRow) {
         setNotFound(true);
         setLoading(false);
         return;
       }
-      setTrip(data as PublicTrip);
-      if (data.vehicle_id) {
-        const { data: v } = await supabase
-          .from("vehicles")
-          .select(
-            "truck_number, make, model, current_lat, current_lng, current_location_label, last_ping_at",
-          )
-          .eq("id", data.vehicle_id)
-          .maybeSingle();
-        if (!cancelled && v) setVehicle(v as PublicVehicle);
+      setTrip(tripRow as PublicTrip);
+      if (tripRow.vehicle_id) {
+        const { data: v } = await supabase.rpc("get_vehicle_by_share_token", {
+          _token: token,
+        });
+        const vRow = Array.isArray(v) ? v[0] : null;
+        if (!cancelled && vRow) setVehicle(vRow as PublicVehicle);
+      } else {
+        setVehicle(null);
       }
       setLoading(false);
     }
