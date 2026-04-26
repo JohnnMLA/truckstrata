@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { FleetMap } from "@/components/dashboard/FleetMap";
@@ -7,6 +7,7 @@ import { CopilotPanel } from "@/components/dashboard/CopilotPanel";
 import { AlertCenter } from "@/components/dashboard/AlertCenter";
 import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
+import { WelcomeBanner } from "@/components/dashboard/WelcomeBanner";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, Loader2, Sparkles, Truck, Radio } from "lucide-react";
 import { useAuth } from "@/lib/auth";
