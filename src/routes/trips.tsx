@@ -3,6 +3,8 @@ import { useEffect, useMemo } from "react";
 import { Loader2, Plus, MapPin, ArrowRight, Inbox } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { NewTripDialog } from "@/components/dashboard/NewTripDialog";
+import { NotificationBell } from "@/components/dashboard/NotificationBell";
+import { AssignTripDialog } from "@/components/dashboard/AssignTripDialog";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import {
@@ -11,6 +13,7 @@ import {
   useVehicles,
   type DBTrip,
 } from "@/hooks/useFleetData";
+import { useRealtimeNotifications } from "@/hooks/useNotifications";
 import { format } from "date-fns";
 
 export const Route = createFileRoute("/trips")({
@@ -48,6 +51,7 @@ function TripsPage() {
   const { data: trips, isLoading } = useTrips();
   const { data: drivers } = useDrivers();
   const { data: vehicles } = useVehicles();
+  useRealtimeNotifications();
 
   const driversById = useMemo(
     () => Object.fromEntries((drivers ?? []).map((d) => [d.id, d])),
@@ -87,7 +91,8 @@ function TripsPage() {
               {list.length} load{list.length === 1 ? "" : "s"}
             </p>
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <NotificationBell />
             <NewTripDialog />
           </div>
         </header>
