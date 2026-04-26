@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   APIProvider,
@@ -7,13 +7,15 @@ import {
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { Truck, Loader2, AlertTriangle } from "lucide-react";
-import type { DBVehicle } from "@/hooks/useFleetData";
+import { Truck, Loader2, AlertTriangle, Clock } from "lucide-react";
+import type { DBTrip, DBVehicle } from "@/hooks/useFleetData";
 import { vehicleUiStatus } from "./VehicleCard";
 import { supabase } from "@/integrations/supabase/client";
+import { RouteOverlay, type TripEta } from "./RouteOverlay";
 
 interface Props {
   vehicles: DBVehicle[];
+  trips?: DBTrip[];
   selectedId?: string;
   onSelect: (id: string) => void;
 }
@@ -23,7 +25,7 @@ const MAP_ID = "truckstrata_fleet_map";
 // Center of contiguous US — used as fallback when no vehicles have coordinates.
 const US_CENTER = { lat: 39.5, lng: -98.35 };
 
-export function FleetMap({ vehicles, selectedId, onSelect }: Props) {
+export function FleetMap({ vehicles, trips = [], selectedId, onSelect }: Props) {
   const keyQuery = useQuery({
     queryKey: ["maps-config"],
     staleTime: Infinity,
