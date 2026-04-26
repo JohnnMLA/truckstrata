@@ -648,6 +648,7 @@ export type Database = {
           revenue_cents: number | null
           scheduled_delivery_at: string | null
           scheduled_pickup_at: string | null
+          share_token: string | null
           status: Database["public"]["Enums"]["trip_status"]
           updated_at: string
           vehicle_id: string | null
@@ -673,6 +674,7 @@ export type Database = {
           revenue_cents?: number | null
           scheduled_delivery_at?: string | null
           scheduled_pickup_at?: string | null
+          share_token?: string | null
           status?: Database["public"]["Enums"]["trip_status"]
           updated_at?: string
           vehicle_id?: string | null
@@ -698,6 +700,7 @@ export type Database = {
           revenue_cents?: number | null
           scheduled_delivery_at?: string | null
           scheduled_pickup_at?: string | null
+          share_token?: string | null
           status?: Database["public"]["Enums"]["trip_status"]
           updated_at?: string
           vehicle_id?: string | null
