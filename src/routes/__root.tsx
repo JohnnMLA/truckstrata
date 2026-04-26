@@ -41,6 +41,14 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      // Security headers (meta-tag form; effective for clickjacking + referrer + permissions)
+      { httpEquiv: "X-Content-Type-Options", content: "nosniff" },
+      { httpEquiv: "Referrer-Policy", content: "strict-origin-when-cross-origin" },
+      { name: "referrer", content: "strict-origin-when-cross-origin" },
+      {
+        httpEquiv: "Permissions-Policy",
+        content: "camera=(self), microphone=(), geolocation=(self), payment=()",
+      },
     ],
     links: [
       {

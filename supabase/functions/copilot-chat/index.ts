@@ -157,8 +157,8 @@ ${JSON.stringify(fleetSnapshot, null, 2)}
         );
       }
       return new Response(
-        JSON.stringify({ error: "AI gateway error", detail: txt }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({ error: "AI service unavailable. Please try again later." }),
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
@@ -168,7 +168,7 @@ ${JSON.stringify(fleetSnapshot, null, 2)}
   } catch (err) {
     console.error("copilot-chat error", err);
     return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" }),
+      JSON.stringify({ error: "Copilot is temporarily unavailable." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
