@@ -78,15 +78,15 @@ Deno.serve(async (req) => {
     });
 
     // RLS scopes everything to the caller's organization automatically.
-    const [vehiclesRes, driversRes, tripsRes, alertsRes] = await Promise.all([
+    const [vehiclesRes, driversRes, tripsRes, alertsRes, maintRes] = await Promise.all([
       supabase
         .from("vehicles")
         .select(
-          "id, truck_number, status, current_location_label, fuel_level_pct, last_ping_at, current_driver_id",
+          "id, truck_number, status, current_location_label, fuel_level_pct, last_ping_at, current_driver_id, odometer_miles",
         ),
       supabase
         .from("drivers")
-        .select("id, full_name, status, hos_remaining_minutes, current_vehicle_id"),
+        .select("id, full_name, status, hos_remaining_minutes, current_vehicle_id, license_expiry"),
       supabase
         .from("trips")
         .select(
@@ -100,12 +100,18 @@ Deno.serve(async (req) => {
         .eq("resolved", false)
         .order("created_at", { ascending: false })
         .limit(10),
+      supabase
+        .from("maintenance_schedules")
+        .select("id, vehicle_id, kind, label, next_due_at, next_due_miles, last_service_at")
+        .order("next_due_at", { ascending: true, nullsFirst: false })
+        .limit(20),
     ]);
 
     if (vehiclesRes.error) throw vehiclesRes.error;
     if (driversRes.error) throw driversRes.error;
     if (tripsRes.error) throw tripsRes.error;
     if (alertsRes.error) throw alertsRes.error;
+    if (maintRes.error) throw maintRes.error;
 
     const fleetSnapshot = {
       generated_at: new Date().toISOString(),
@@ -113,6 +119,7 @@ Deno.serve(async (req) => {
       drivers: driversRes.data ?? [],
       recent_trips: tripsRes.data ?? [],
       open_alerts: alertsRes.data ?? [],
+      maintenance_schedules: maintRes.data ?? [],
     };
 
     if (fleetSnapshot.vehicles.length === 0) {
