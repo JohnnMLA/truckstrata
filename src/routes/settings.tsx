@@ -832,9 +832,9 @@ function VehiclesTab() {
       truck_number: v.truck_number,
       make: v.make ?? "",
       model: v.model ?? "",
-      year: "",
-      license_plate: "",
-      vin: "",
+      year: v.year ? String(v.year) : "",
+      license_plate: v.license_plate ?? "",
+      vin: v.vin ?? "",
       status: v.status,
     });
     setOpen(true);
