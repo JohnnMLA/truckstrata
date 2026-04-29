@@ -27,9 +27,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/dispatch")({
   head: () => ({
     meta: [
-      { title: "Dispatch · TruckStrata" },
+      { title: "Dispatch · TruckDispatchAI" },
       { name: "description", content: "Live fleet map, driver status, and AI copilots for your dispatch team." },
-      { property: "og:title", content: "Dispatch · TruckStrata" },
+      { property: "og:title", content: "Dispatch · TruckDispatchAI" },
       { property: "og:description", content: "Live fleet map, driver status, and AI copilots." },
     ],
   }),

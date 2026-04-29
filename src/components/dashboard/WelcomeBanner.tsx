@@ -41,7 +41,7 @@ export function WelcomeBanner({ show }: Props) {
           <div className="flex items-start justify-between gap-3">
             <div>
               <h3 className="text-sm font-semibold text-foreground">
-                Welcome to TruckStrata
+                Welcome to TruckDispatchAI
               </h3>
               <p className="mt-1 text-xs text-muted-foreground">
                 Three quick steps to get rolling — your dashboard comes alive as

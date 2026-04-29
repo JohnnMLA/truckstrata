@@ -17,7 +17,7 @@ export function Logo({ className = "" }: { className?: string }) {
         </svg>
       </div>
       <span className="text-base font-semibold tracking-tight text-foreground">
-        TruckStrata
+        TruckDispatchAI
       </span>
     </Link>
   );

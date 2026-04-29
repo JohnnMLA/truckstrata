@@ -34,7 +34,7 @@ export const Route = createFileRoute("/driver")({
         content:
           "Driver portal for accepting trips and updating delivery status on the road.",
       },
-      { property: "og:title", content: "Driver Portal · TruckStrata" },
+      { property: "og:title", content: "Driver Portal · TruckDispatchAI" },
       {
         property: "og:description",
         content:

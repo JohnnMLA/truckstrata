@@ -53,13 +53,13 @@ import {
 export const Route = createFileRoute("/maintenance")({
   head: () => ({
     meta: [
-      { title: "Maintenance · TruckStrata" },
+      { title: "Maintenance · TruckDispatchAI" },
       {
         name: "description",
         content:
           "Track service intervals, DOT inspections, and recurring PM tasks per vehicle. Stay ahead of due dates and avoid downtime.",
       },
-      { property: "og:title", content: "Maintenance · TruckStrata" },
+      { property: "og:title", content: "Maintenance · TruckDispatchAI" },
       {
         property: "og:description",
         content:

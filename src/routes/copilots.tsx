@@ -9,13 +9,13 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/copilots")({
   head: () => ({
     meta: [
-      { title: "Copilots · TruckStrata" },
+      { title: "Copilots · TruckDispatchAI" },
       {
         name: "description",
         content:
-          "Chat with TruckStrata's AI Dispatch Copilot — grounded in your live fleet, drivers, trips, alerts, and maintenance schedules.",
+          "Chat with TruckDispatchAI's AI Dispatch Copilot — grounded in your live fleet, drivers, trips, alerts, and maintenance schedules.",
       },
-      { property: "og:title", content: "AI Copilots · TruckStrata" },
+      { property: "og:title", content: "AI Copilots · TruckDispatchAI" },
       {
         property: "og:description",
         content:

@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Facebook, Instagram, Twitter, Linkedin, ShieldCheck } from "lucide-react";
 
 const socialLinks = [
-  { label: "Facebook", href: "https://facebook.com/truckstrata", Icon: Facebook },
-  { label: "Instagram", href: "https://instagram.com/truckstrata", Icon: Instagram },
-  { label: "X (Twitter)", href: "https://x.com/truckstrata", Icon: Twitter },
-  { label: "LinkedIn", href: "https://linkedin.com/company/truckstrata", Icon: Linkedin },
+  { label: "Facebook", href: "https://facebook.com/truckdispatchai", Icon: Facebook },
+  { label: "Instagram", href: "https://instagram.com/truckdispatchai", Icon: Instagram },
+  { label: "X (Twitter)", href: "https://x.com/truckdispatchai", Icon: Twitter },
+  { label: "LinkedIn", href: "https://linkedin.com/company/truckdispatchai", Icon: Linkedin },
 ];
 
 export function CTA() {
@@ -26,7 +26,7 @@ export function CTA() {
           <Link to="/auth">
             <Button size="lg" className="rounded-full px-8">Start free trial</Button>
           </Link>
-          <a href="mailto:hello@truckstrata.com?subject=TruckStrata%20demo%20request">
+          <a href="mailto:hello@truckdispatchai.com?subject=TruckDispatchAI%20demo%20request">
             <Button size="lg" variant="outline" className="rounded-full px-8">
               Talk to sales
             </Button>
@@ -45,7 +45,7 @@ export function CTA() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`Follow TruckStrata on ${label}`}
+              aria-label={`Follow TruckDispatchAI on ${label}`}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
             >
               <Icon className="h-4 w-4" />
@@ -53,7 +53,7 @@ export function CTA() {
           ))}
         </div>
         <p className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} TruckStrata, Inc. · truckstrata.com
+          © {new Date().getFullYear()} TruckDispatchAI, Inc. · truckdispatchai.com
         </p>
       </div>
     </section>

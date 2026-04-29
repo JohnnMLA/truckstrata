@@ -28,7 +28,7 @@ export function Hero() {
             <span className="bg-[image:var(--gradient-primary)] bg-clip-text text-transparent"> top 1%.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-balance text-base text-muted-foreground sm:text-lg">
-            TruckStrata replaces Samsara and Motive with a calmer, smarter
+            TruckDispatchAI replaces Samsara and Motive with a calmer, smarter
             operating system — built for owner-operators and small fleets.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

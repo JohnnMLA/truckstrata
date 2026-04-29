@@ -36,13 +36,13 @@ import { useVehicles, useDrivers } from "@/hooks/useFleetData";
 export const Route = createFileRoute("/analytics")({
   head: () => ({
     meta: [
-      { title: "Analytics · TruckStrata" },
+      { title: "Analytics · TruckDispatchAI" },
       {
         name: "description",
         content:
           "Revenue, miles, on-time performance, and fleet utilization KPIs across your operation.",
       },
-      { property: "og:title", content: "Fleet Analytics · TruckStrata" },
+      { property: "og:title", content: "Fleet Analytics · TruckDispatchAI" },
       {
         property: "og:description",
         content: "Track revenue, on-time delivery, and per-truck utilization.",
@@ -113,7 +113,7 @@ function exportTripsCsv(trips: AnalyticsTrip[], days: number) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `truckstrata-trips-${days}d-${format(new Date(), "yyyy-MM-dd")}.csv`;
+  a.download = `truckdispatchai-trips-${days}d-${format(new Date(), "yyyy-MM-dd")}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
