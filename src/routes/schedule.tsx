@@ -19,13 +19,13 @@ import { useRealtimeNotifications } from "@/hooks/useNotifications";
 export const Route = createFileRoute("/schedule")({
   head: () => ({
     meta: [
-      { title: "Schedule · TruckStrata" },
+      { title: "Schedule · TruckDispatchAI" },
       {
         name: "description",
         content:
           "Weekly view of every truck's assigned loads. Assign drivers, set pickup times, and notify in one click.",
       },
-      { property: "og:title", content: "Schedule · TruckStrata" },
+      { property: "og:title", content: "Schedule · TruckDispatchAI" },
       {
         property: "og:description",
         content: "Weekly schedule for every truck in your fleet.",

@@ -12,10 +12,10 @@ import { Loader2 } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in · TruckStrata" },
+      { title: "Sign in · TruckDispatchAI" },
       {
         name: "description",
-        content: "Sign in to your TruckStrata fleet operating system.",
+        content: "Sign in to your TruckDispatchAI fleet operating system.",
       },
     ],
   }),
@@ -58,7 +58,7 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account created. Welcome to TruckStrata.");
+        toast.success("Account created. Welcome to TruckDispatchAI.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -191,7 +191,7 @@ function AuthPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            {mode === "signin" ? "New to TruckStrata?" : "Already have an account?"}{" "}
+            {mode === "signin" ? "New to TruckDispatchAI?" : "Already have an account?"}{" "}
             <button
               type="button"
               className="font-medium text-primary hover:underline"

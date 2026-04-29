@@ -21,13 +21,13 @@ import { format } from "date-fns";
 export const Route = createFileRoute("/trips")({
   head: () => ({
     meta: [
-      { title: "Trips · TruckStrata" },
+      { title: "Trips · TruckDispatchAI" },
       {
         name: "description",
         content:
           "Manage active and upcoming loads across your fleet — assignments, schedules, and revenue at a glance.",
       },
-      { property: "og:title", content: "Trips · TruckStrata" },
+      { property: "og:title", content: "Trips · TruckDispatchAI" },
       {
         property: "og:description",
         content: "Manage active and upcoming loads across your fleet.",

@@ -8,7 +8,7 @@ import { Logo } from "@/components/Logo";
 export const Route = createFileRoute("/track/$token")({
   head: ({ params }) => ({
     meta: [
-      { title: `Track shipment · TruckStrata` },
+      { title: `Track shipment · TruckDispatchAI` },
       { name: "description", content: "Live tracking for your shipment." },
       { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "Track your shipment" },
@@ -276,7 +276,7 @@ function PublicTrackPage() {
         )}
 
         <p className="mt-8 text-center text-[11px] text-muted-foreground">
-          Powered by TruckStrata — auto-refreshes every 30 seconds
+          Powered by TruckDispatchAI — auto-refreshes every 30 seconds
         </p>
       </main>
     </div>

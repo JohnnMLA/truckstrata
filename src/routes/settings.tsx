@@ -69,7 +69,7 @@ const ROLES: { value: AppRole; label: string; hint: string }[] = [
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Settings · TruckStrata" },
+      { title: "Settings · TruckDispatchAI" },
       {
         name: "description",
         content:

@@ -8,16 +8,16 @@ import { CTA } from "@/components/landing/CTA";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TruckStrata · The AI-native trucking OS" },
+      { title: "TruckDispatchAI · Run Your Fleet With Agents, Not Headaches" },
       {
         name: "description",
         content:
-          "TruckStrata replaces Samsara and Motive with a calmer, smarter operating system for owner-operators and small fleets.",
+          "TruckDispatchAI's AI Super Dispatcher™ runs trips, drivers, and maintenance for owner-operators and small fleets.",
       },
-      { property: "og:title", content: "TruckStrata · The AI-native trucking OS" },
+      { property: "og:title", content: "TruckDispatchAI · Run Your Fleet With Agents, Not Headaches" },
       {
         property: "og:description",
-        content: "Live fleet tracking, AI dispatch copilots, and road intelligence — for half the cost.",
+        content: "Meet AI Super Dispatcher™ — the autonomous trucking OS for small fleets.",
       },
     ],
   }),
