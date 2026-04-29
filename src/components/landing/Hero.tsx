@@ -24,12 +24,12 @@ export function Hero() {
             AI-native trucking OS · Now in early access
           </div>
           <h1 className="text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-            Run your fleet like the
-            <span className="bg-[image:var(--gradient-primary)] bg-clip-text text-transparent"> top 1%.</span>
+            Run Your Fleet With
+            <span className="bg-[image:var(--gradient-primary)] bg-clip-text text-transparent"> Agents,</span> Not Headaches.
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-balance text-base text-muted-foreground sm:text-lg">
-            TruckDispatchAI replaces Samsara and Motive with a calmer, smarter
-            operating system — built for owner-operators and small fleets.
+            Meet <span className="font-semibold text-foreground">AI Super Dispatcher™</span> — the autonomous
+            operating system that runs trips, drivers, and maintenance for owner-operators and small fleets.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/dispatch">
