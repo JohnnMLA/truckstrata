@@ -22,6 +22,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrackTokenRouteImport } from './routes/track.$token'
+import { Route as PricingCompareRouteImport } from './routes/pricing.compare'
 import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
 
 const TripsRoute = TripsRouteImport.update({
@@ -89,6 +90,11 @@ const TrackTokenRoute = TrackTokenRouteImport.update({
   path: '/track/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingCompareRoute = PricingCompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => PricingRoute,
+} as any)
 const ApiPublicHooksSendRemindersRoute =
   ApiPublicHooksSendRemindersRouteImport.update({
     id: '/api/public/hooks/send-reminders',
@@ -104,11 +110,12 @@ export interface FileRoutesByFullPath {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
-  '/pricing': typeof PricingRoute
+  '/pricing': typeof PricingRouteWithChildren
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
+  '/pricing/compare': typeof PricingCompareRoute
   '/track/$token': typeof TrackTokenRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
@@ -120,11 +127,12 @@ export interface FileRoutesByTo {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
-  '/pricing': typeof PricingRoute
+  '/pricing': typeof PricingRouteWithChildren
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
+  '/pricing/compare': typeof PricingCompareRoute
   '/track/$token': typeof TrackTokenRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
@@ -137,11 +145,12 @@ export interface FileRoutesById {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
-  '/pricing': typeof PricingRoute
+  '/pricing': typeof PricingRouteWithChildren
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
+  '/pricing/compare': typeof PricingCompareRoute
   '/track/$token': typeof TrackTokenRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
@@ -160,6 +169,7 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/settings'
     | '/trips'
+    | '/pricing/compare'
     | '/track/$token'
     | '/api/public/hooks/send-reminders'
   fileRoutesByTo: FileRoutesByTo
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/settings'
     | '/trips'
+    | '/pricing/compare'
     | '/track/$token'
     | '/api/public/hooks/send-reminders'
   id:
@@ -192,6 +203,7 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/settings'
     | '/trips'
+    | '/pricing/compare'
     | '/track/$token'
     | '/api/public/hooks/send-reminders'
   fileRoutesById: FileRoutesById
@@ -204,7 +216,7 @@ export interface RootRouteChildren {
   DispatchRoute: typeof DispatchRoute
   DriverRoute: typeof DriverRoute
   MaintenanceRoute: typeof MaintenanceRoute
-  PricingRoute: typeof PricingRoute
+  PricingRoute: typeof PricingRouteWithChildren
   ReportsRoute: typeof ReportsRoute
   ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
@@ -306,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pricing/compare': {
+      id: '/pricing/compare'
+      path: '/compare'
+      fullPath: '/pricing/compare'
+      preLoaderRoute: typeof PricingCompareRouteImport
+      parentRoute: typeof PricingRoute
+    }
     '/api/public/hooks/send-reminders': {
       id: '/api/public/hooks/send-reminders'
       path: '/api/public/hooks/send-reminders'
@@ -316,6 +335,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface PricingRouteChildren {
+  PricingCompareRoute: typeof PricingCompareRoute
+}
+
+const PricingRouteChildren: PricingRouteChildren = {
+  PricingCompareRoute: PricingCompareRoute,
+}
+
+const PricingRouteWithChildren =
+  PricingRoute._addFileChildren(PricingRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
@@ -324,7 +354,7 @@ const rootRouteChildren: RootRouteChildren = {
   DispatchRoute: DispatchRoute,
   DriverRoute: DriverRoute,
   MaintenanceRoute: MaintenanceRoute,
-  PricingRoute: PricingRoute,
+  PricingRoute: PricingRouteWithChildren,
   ReportsRoute: ReportsRoute,
   ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
