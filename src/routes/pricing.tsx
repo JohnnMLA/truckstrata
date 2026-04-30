@@ -221,9 +221,66 @@ function PricingPage() {
                   );
                 })}
               </div>
+              {activeOption.note && (
+                <p className="mx-auto mt-3 max-w-md text-xs text-muted-foreground">
+                  {activeOption.note}
+                </p>
+              )}
             </div>
           </div>
         </section>
+
+        <section className="mx-auto max-w-7xl px-6 pb-12">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {plans.map((plan) => (
+              <article
+                key={plan.name}
+                className={cn(
+                  "relative flex flex-col rounded-3xl border bg-card p-6 shadow-[var(--shadow-soft)] transition",
+                  plan.highlight
+                    ? "border-primary/60 ring-1 ring-primary/40 shadow-[var(--shadow-elevated)]"
+                    : "border-border/60",
+                )}
+              >
+                {plan.badge && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-soft)]">
+                    {plan.badge}
+                  </span>
+                )}
+                <header>
+                  <h2 className="text-lg font-semibold">{plan.name}</h2>
+                  <p className="mt-1 text-xs text-muted-foreground">{plan.range}</p>
+                  <div className="mt-5 flex items-baseline gap-1">
+                    <span className="text-4xl font-semibold tracking-tight tabular-nums">
+                      {formatPrice(plan.basePrice, activeMultiplier)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {plan.priceUnit}
+                    </span>
+                  </div>
+                  {isMonthly ? (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Billed monthly
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-xs text-primary font-medium">
+                      <span className="text-muted-foreground line-through mr-1">
+                        ${plan.basePrice}{plan.priceUnit}
+                      </span>
+                      Save {savingsPct}% vs monthly
+                    </p>
+                  )}
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {cycle === "monthly"
+                      ? "Month-to-month — cancel anytime"
+                      : cycle === "annual"
+                      ? "12-month plan length"
+                      : cycle === "18month"
+                      ? "18-month plan length — paid upfront"
+                      : "18-month plan length — 3 equal installments"}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
+                </header>
 
         <section className="mx-auto max-w-7xl px-6 pb-12">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
