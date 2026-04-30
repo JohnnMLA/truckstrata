@@ -26,12 +26,12 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
-type BillingCycle = "monthly" | "annual" | "18month";
+type BillingCycle = "18month" | "monthly";
 
-const billingOptions: { id: BillingCycle; label: string; discount: number }[] = [
-  { id: "monthly", label: "Monthly", discount: 0 },
-  { id: "annual", label: "Annual — save 10%", discount: 0.1 },
-  { id: "18month", label: "18-Month — save 15%", discount: 0.15 },
+// 18-month is the base price. Monthly adds a 15% premium.
+const billingOptions: { id: BillingCycle; label: string; multiplier: number }[] = [
+  { id: "18month", label: "18-Month plan", multiplier: 1 },
+  { id: "monthly", label: "Monthly (+15%)", multiplier: 1.15 },
 ];
 
 type Plan = {
