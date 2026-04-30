@@ -53,7 +53,7 @@ const plans: Plan[] = [
     basePrice: 25,
     priceUnit: "/mo",
     range: "1 truck",
-    contractNote: "Month-to-month",
+    contractNote: "18-month plan length",
     setup: "Setup fee $99",
     features: [
       "GPS tracking",
@@ -69,7 +69,7 @@ const plans: Plan[] = [
     basePrice: 35,
     priceUnit: "/truck/mo",
     range: "2–15 trucks",
-    contractNote: "18-month contract",
+    contractNote: "18-month plan length",
     setup: "Setup fee from $299",
     highlight: true,
     badge: "Most popular",
@@ -87,7 +87,7 @@ const plans: Plan[] = [
     basePrice: 49,
     priceUnit: "/truck/mo",
     range: "16–75 trucks",
-    contractNote: "18-month contract",
+    contractNote: "18-month plan length",
     setup: "Setup fee from $799",
     features: [
       "Everything in Fleet Core",
@@ -103,7 +103,7 @@ const plans: Plan[] = [
     basePrice: 69,
     priceUnit: "/truck/mo",
     range: "76–500 trucks",
-    contractNote: "18-month contract",
+    contractNote: "18-month plan length",
     setup: "Setup fee from $2,500",
     features: [
       "Everything in Fleet Pro",
@@ -119,7 +119,7 @@ const plans: Plan[] = [
 const trustItems = [
   {
     icon: Clock,
-    title: "18-month contract",
+    title: "18-month plan length",
     body: "Half of Samsara's 36-month standard.",
   },
   {
