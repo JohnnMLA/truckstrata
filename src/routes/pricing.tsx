@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, ShieldCheck, Clock, Wallet } from "lucide-react";
+import { Check, ShieldCheck, Clock, Wallet, Package } from "lucide-react";
 import { MarketingHeader } from "@/components/MarketingHeader";
 import { Button } from "@/components/ui/button";
 import { CTA } from "@/components/landing/CTA";
@@ -25,13 +26,21 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
+type BillingCycle = "monthly" | "annual" | "18month";
+
+const billingOptions: { id: BillingCycle; label: string; discount: number }[] = [
+  { id: "monthly", label: "Monthly", discount: 0 },
+  { id: "annual", label: "Annual — save 10%", discount: 0.1 },
+  { id: "18month", label: "18-Month — save 15%", discount: 0.15 },
+];
+
 type Plan = {
   name: string;
-  price: string;
+  basePrice: number;
   priceUnit: string;
   range: string;
-  contract: string;
-  setup?: string;
+  contractNote: string;
+  setup: string;
   highlight?: boolean;
   badge?: string;
   features: string[];
@@ -41,31 +50,32 @@ type Plan = {
 const plans: Plan[] = [
   {
     name: "Starter Solo",
-    price: "$25",
-    priceUnit: "/mo flat",
+    basePrice: 25,
+    priceUnit: "/mo",
     range: "1 truck",
-    contract: "12-month contract",
+    contractNote: "Month-to-month",
+    setup: "Setup fee $99",
     features: [
-      "Built-in driver comms",
-      "Basic Truck Support Agent",
-      "Trip & document basics",
+      "GPS tracking",
+      "Driver comms",
+      "Document upload",
       "Mobile driver app",
-      "No AI Super Dispatcher",
+      "No AI agents",
     ],
     cta: "Start with Solo",
   },
   {
     name: "Fleet Core",
-    price: "$35",
+    basePrice: 35,
     priceUnit: "/truck/mo",
     range: "2–15 trucks",
-    contract: "18-month contract",
-    setup: "Setup fee $299–$599",
+    contractNote: "18-month contract",
+    setup: "Setup fee from $299",
     highlight: true,
     badge: "Most popular",
     features: [
       "AI Super Dispatcher™ included",
-      "Full Truck Support Agent included",
+      "Truck Support Agent included",
       "Smart dispatch board",
       "Document AI",
       "Built-in driver comms",
@@ -74,15 +84,15 @@ const plans: Plan[] = [
   },
   {
     name: "Fleet Pro",
-    price: "$49",
+    basePrice: 49,
     priceUnit: "/truck/mo",
     range: "16–75 trucks",
-    contract: "18-month contract",
-    setup: "Setup fee $799–$1,999",
+    contractNote: "18-month contract",
+    setup: "Setup fee from $799",
     features: [
       "Everything in Fleet Core",
       "Trailer tracking",
-      "Dashcam service ($15/truck)",
+      "Dashcam service",
       "ELD integration",
       "Phone support",
     ],
@@ -90,11 +100,11 @@ const plans: Plan[] = [
   },
   {
     name: "Fleet Enterprise",
-    price: "$69",
+    basePrice: 69,
     priceUnit: "/truck/mo",
     range: "76–500 trucks",
-    contract: "18-month contract",
-    setup: "Setup fee $2,500+",
+    contractNote: "18-month contract",
+    setup: "Setup fee from $2,500",
     features: [
       "Everything in Fleet Pro",
       "Dedicated customer success manager",
@@ -110,21 +120,36 @@ const trustItems = [
   {
     icon: Clock,
     title: "18-month contract",
-    body: "Half of Samsara's standard 36-month commitment.",
+    body: "Half of Samsara's 36-month standard.",
   },
   {
     icon: Wallet,
-    title: "50% early termination fee",
+    title: "50% early termination",
     body: "Versus Samsara's 100% remaining-balance penalty.",
   },
   {
     icon: ShieldCheck,
     title: "30-day money-back guarantee",
-    body: "From AI activation date. SaaS subscription only — hardware is yours to keep.",
+    body: "From AI activation date.",
+  },
+  {
+    icon: Package,
+    title: "Hardware is yours",
+    body: "Never leased — you own it from day one.",
   },
 ];
 
+function formatPrice(base: number, discount: number) {
+  const v = base * (1 - discount);
+  // Show whole dollars when clean, else 2 decimals
+  return Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`;
+}
+
 function PricingPage() {
+  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+  const activeDiscount =
+    billingOptions.find((o) => o.id === cycle)?.discount ?? 0;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <MarketingHeader />
@@ -135,7 +160,7 @@ function PricingPage() {
             style={{ background: "var(--gradient-hero)" }}
             aria-hidden
           />
-          <div className="mx-auto max-w-7xl px-6 pt-20 pb-12 md:pt-28">
+          <div className="mx-auto max-w-7xl px-6 pt-20 pb-10 md:pt-28">
             <div className="mx-auto max-w-3xl text-center">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
                 <span className="h-1.5 w-1.5 rounded-full bg-success" />
@@ -148,9 +173,36 @@ function PricingPage() {
                 </span>
               </h1>
               <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
-                Pick a plan that fits your fleet size. AI Super Dispatcher™ is included
-                starting on Fleet Core.
+                Pick a plan that fits your fleet size. AI Super Dispatcher™ is
+                included starting on Fleet Core.
               </p>
+
+              {/* Billing toggle */}
+              <div
+                role="tablist"
+                aria-label="Billing cycle"
+                className="mx-auto mt-8 inline-flex flex-wrap items-center justify-center gap-1 rounded-full border border-border/60 bg-card/80 p-1 shadow-[var(--shadow-soft)] backdrop-blur"
+              >
+                {billingOptions.map((opt) => {
+                  const active = cycle === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setCycle(opt.id)}
+                      className={cn(
+                        "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                        active
+                          ? "bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
@@ -176,13 +228,28 @@ function PricingPage() {
                   <h2 className="text-lg font-semibold">{plan.name}</h2>
                   <p className="mt-1 text-xs text-muted-foreground">{plan.range}</p>
                   <div className="mt-5 flex items-baseline gap-1">
-                    <span className="text-4xl font-semibold tracking-tight">{plan.price}</span>
-                    <span className="text-sm text-muted-foreground">{plan.priceUnit}</span>
+                    <span className="text-4xl font-semibold tracking-tight tabular-nums">
+                      {formatPrice(plan.basePrice, activeDiscount)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {plan.priceUnit}
+                    </span>
                   </div>
-                  <p className="mt-2 text-xs text-muted-foreground">{plan.contract}</p>
-                  {plan.setup && (
-                    <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
+                  {activeDiscount > 0 && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      <span className="line-through">
+                        ${plan.basePrice}
+                        {plan.priceUnit}
+                      </span>{" "}
+                      <span className="font-medium text-primary">
+                        save {Math.round(activeDiscount * 100)}%
+                      </span>
+                    </p>
                   )}
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {plan.contractNote}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
                 </header>
 
                 <ul className="mt-6 flex-1 space-y-3">
@@ -210,21 +277,27 @@ function PricingPage() {
             ))}
           </div>
 
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Annual prepay saves 10%.</span>{" "}
-            <span className="font-medium text-foreground">18-month prepay saves 15%.</span>
-          </p>
+          <div className="mt-8 text-center">
+            <Link
+              to="/pricing/compare"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Compare all features in detail →
+            </Link>
+          </div>
         </section>
 
         <section className="mx-auto max-w-7xl px-6 pb-24">
-          <div className="grid grid-cols-1 gap-4 rounded-3xl border border-border/60 bg-card/60 p-6 backdrop-blur md:grid-cols-3 md:p-8">
+          <div className="grid grid-cols-1 gap-4 rounded-3xl border border-border/60 bg-card/60 p-6 backdrop-blur sm:grid-cols-2 lg:grid-cols-4 md:p-8">
             {trustItems.map((item) => (
               <div key={item.title} className="flex items-start gap-3">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
                   <item.icon className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {item.title}
+                  </p>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     {item.body}
                   </p>
