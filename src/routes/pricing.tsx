@@ -233,7 +233,7 @@ function PricingPage() {
                   <div className="flex items-center justify-between gap-2">
                     <h2 className="text-lg font-semibold">{plan.name}</h2>
                     {!isMonthly && (
-                      <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-success">
+                      <span className="rounded-full bg-[#16A34A] px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-sm">
                         Save 20%
                       </span>
                     )}
