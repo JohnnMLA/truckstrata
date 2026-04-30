@@ -26,12 +26,12 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
-type BillingCycle = "monthly" | "annual" | "18month";
+type BillingCycle = "18month" | "monthly";
 
-const billingOptions: { id: BillingCycle; label: string; discount: number }[] = [
-  { id: "monthly", label: "Monthly", discount: 0 },
-  { id: "annual", label: "Annual — save 10%", discount: 0.1 },
-  { id: "18month", label: "18-Month — save 15%", discount: 0.15 },
+// 18-month is the base price. Monthly adds a 15% premium.
+const billingOptions: { id: BillingCycle; label: string; multiplier: number }[] = [
+  { id: "18month", label: "18-Month plan", multiplier: 1 },
+  { id: "monthly", label: "Monthly (+15%)", multiplier: 1.15 },
 ];
 
 type Plan = {
@@ -53,7 +53,7 @@ const plans: Plan[] = [
     basePrice: 25,
     priceUnit: "/mo",
     range: "1 truck",
-    contractNote: "Month-to-month",
+    contractNote: "18-month plan length",
     setup: "Setup fee $99",
     features: [
       "GPS tracking",
@@ -69,7 +69,7 @@ const plans: Plan[] = [
     basePrice: 35,
     priceUnit: "/truck/mo",
     range: "2–15 trucks",
-    contractNote: "18-month contract",
+    contractNote: "18-month plan length",
     setup: "Setup fee from $299",
     highlight: true,
     badge: "Most popular",
@@ -87,7 +87,7 @@ const plans: Plan[] = [
     basePrice: 49,
     priceUnit: "/truck/mo",
     range: "16–75 trucks",
-    contractNote: "18-month contract",
+    contractNote: "18-month plan length",
     setup: "Setup fee from $799",
     features: [
       "Everything in Fleet Core",
@@ -103,7 +103,7 @@ const plans: Plan[] = [
     basePrice: 69,
     priceUnit: "/truck/mo",
     range: "76–500 trucks",
-    contractNote: "18-month contract",
+    contractNote: "18-month plan length",
     setup: "Setup fee from $2,500",
     features: [
       "Everything in Fleet Pro",
@@ -119,7 +119,7 @@ const plans: Plan[] = [
 const trustItems = [
   {
     icon: Clock,
-    title: "18-month contract",
+    title: "18-month plan length",
     body: "Half of Samsara's 36-month standard.",
   },
   {
@@ -139,16 +139,16 @@ const trustItems = [
   },
 ];
 
-function formatPrice(base: number, discount: number) {
-  const v = base * (1 - discount);
-  // Show whole dollars when clean, else 2 decimals
+function formatPrice(base: number, multiplier: number) {
+  const v = base * multiplier;
   return Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`;
 }
 
 function PricingPage() {
-  const [cycle, setCycle] = useState<BillingCycle>("monthly");
-  const activeDiscount =
-    billingOptions.find((o) => o.id === cycle)?.discount ?? 0;
+  const [cycle, setCycle] = useState<BillingCycle>("18month");
+  const activeMultiplier =
+    billingOptions.find((o) => o.id === cycle)?.multiplier ?? 1;
+  const isMonthly = cycle === "monthly";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -229,25 +229,26 @@ function PricingPage() {
                   <p className="mt-1 text-xs text-muted-foreground">{plan.range}</p>
                   <div className="mt-5 flex items-baseline gap-1">
                     <span className="text-4xl font-semibold tracking-tight tabular-nums">
-                      {formatPrice(plan.basePrice, activeDiscount)}
+                      {formatPrice(plan.basePrice, activeMultiplier)}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       {plan.priceUnit}
                     </span>
                   </div>
-                  {activeDiscount > 0 && (
+                  {isMonthly ? (
                     <p className="mt-1 text-xs text-muted-foreground">
-                      <span className="line-through">
-                        ${plan.basePrice}
-                        {plan.priceUnit}
-                      </span>{" "}
-                      <span className="font-medium text-primary">
-                        save {Math.round(activeDiscount * 100)}%
+                      <span className="line-through">${plan.basePrice}{plan.priceUnit}</span>{" "}
+                      <span className="font-medium text-foreground">
+                        on 18-month plan
                       </span>
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-xs text-primary font-medium">
+                      Save 15% vs monthly
                     </p>
                   )}
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {plan.contractNote}
+                    {isMonthly ? "Month-to-month — cancel anytime" : plan.contractNote}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
                 </header>
