@@ -14,9 +14,9 @@ export function MarketingHeader() {
           <a href="#ai" className="text-sm text-muted-foreground transition hover:text-foreground">
             AI Copilots
           </a>
-          <a href="#pricing" className="text-sm text-muted-foreground transition hover:text-foreground">
+          <Link to="/pricing" className="text-sm text-muted-foreground transition hover:text-foreground">
             Pricing
-          </a>
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
           <Link to="/auth">

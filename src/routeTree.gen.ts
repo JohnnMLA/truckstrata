@@ -13,6 +13,7 @@ import { Route as TripsRouteImport } from './routes/trips'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as MaintenanceRouteImport } from './routes/maintenance'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as DispatchRouteImport } from './routes/dispatch'
@@ -41,6 +42,11 @@ const ScheduleRoute = ScheduleRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MaintenanceRoute = MaintenanceRouteImport.update({
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
+  '/pricing': typeof PricingRoute
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
+  '/pricing': typeof PricingRoute
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
+  '/pricing': typeof PricingRoute
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/dispatch'
     | '/driver'
     | '/maintenance'
+    | '/pricing'
     | '/reports'
     | '/schedule'
     | '/settings'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/dispatch'
     | '/driver'
     | '/maintenance'
+    | '/pricing'
     | '/reports'
     | '/schedule'
     | '/settings'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/dispatch'
     | '/driver'
     | '/maintenance'
+    | '/pricing'
     | '/reports'
     | '/schedule'
     | '/settings'
@@ -192,6 +204,7 @@ export interface RootRouteChildren {
   DispatchRoute: typeof DispatchRoute
   DriverRoute: typeof DriverRoute
   MaintenanceRoute: typeof MaintenanceRoute
+  PricingRoute: typeof PricingRoute
   ReportsRoute: typeof ReportsRoute
   ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
@@ -228,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maintenance': {
@@ -304,6 +324,7 @@ const rootRouteChildren: RootRouteChildren = {
   DispatchRoute: DispatchRoute,
   DriverRoute: DriverRoute,
   MaintenanceRoute: MaintenanceRoute,
+  PricingRoute: PricingRoute,
   ReportsRoute: ReportsRoute,
   ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
