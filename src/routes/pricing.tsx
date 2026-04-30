@@ -282,52 +282,6 @@ function PricingPage() {
                   <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
                 </header>
 
-        <section className="mx-auto max-w-7xl px-6 pb-12">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {plans.map((plan) => (
-              <article
-                key={plan.name}
-                className={cn(
-                  "relative flex flex-col rounded-3xl border bg-card p-6 shadow-[var(--shadow-soft)] transition",
-                  plan.highlight
-                    ? "border-primary/60 ring-1 ring-primary/40 shadow-[var(--shadow-elevated)]"
-                    : "border-border/60",
-                )}
-              >
-                {plan.badge && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-soft)]">
-                    {plan.badge}
-                  </span>
-                )}
-                <header>
-                  <h2 className="text-lg font-semibold">{plan.name}</h2>
-                  <p className="mt-1 text-xs text-muted-foreground">{plan.range}</p>
-                  <div className="mt-5 flex items-baseline gap-1">
-                    <span className="text-4xl font-semibold tracking-tight tabular-nums">
-                      {formatPrice(plan.basePrice, activeMultiplier)}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {plan.priceUnit}
-                    </span>
-                  </div>
-                  {isMonthly ? (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      <span className="line-through">${plan.basePrice}{plan.priceUnit}</span>{" "}
-                      <span className="font-medium text-foreground">
-                        on standard plan length
-                      </span>
-                    </p>
-                  ) : (
-                    <p className="mt-1 text-xs text-primary font-medium">
-                      Save 15% vs monthly
-                    </p>
-                  )}
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    {isMonthly ? "Month-to-month — cancel anytime" : plan.contractNote}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
-                </header>
-
                 <ul className="mt-6 flex-1 space-y-3">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-sm">
