@@ -279,6 +279,15 @@ function PricingPage() {
             ))}
           </div>
 
+          <ul className="mx-auto mt-10 max-w-3xl space-y-2 text-center text-xs text-muted-foreground sm:text-sm">
+            <li>• 18-month commitment — half of Samsara's 36 months</li>
+            <li>
+              • Pay upfront in 1 payment or split into 3 equal monthly
+              installments — same 20% discount either way
+            </li>
+            <li>• 30-day money-back guarantee from your AI activation date</li>
+          </ul>
+
           <div className="mt-8 text-center">
             <Link
               to="/pricing/compare"
