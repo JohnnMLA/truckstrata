@@ -139,16 +139,16 @@ const trustItems = [
   },
 ];
 
-function formatPrice(base: number, discount: number) {
-  const v = base * (1 - discount);
-  // Show whole dollars when clean, else 2 decimals
+function formatPrice(base: number, multiplier: number) {
+  const v = base * multiplier;
   return Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`;
 }
 
 function PricingPage() {
-  const [cycle, setCycle] = useState<BillingCycle>("monthly");
-  const activeDiscount =
-    billingOptions.find((o) => o.id === cycle)?.discount ?? 0;
+  const [cycle, setCycle] = useState<BillingCycle>("18month");
+  const activeMultiplier =
+    billingOptions.find((o) => o.id === cycle)?.multiplier ?? 1;
+  const isMonthly = cycle === "monthly";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
