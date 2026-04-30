@@ -351,9 +351,9 @@ function ComparePage() {
                 <tbody>
                   {sections.map((section) => (
                     <Fragment key={section.title}>
-                      <tr className="bg-muted/20">
+                      <tr style={{ backgroundColor: "#F1F5F9" }}>
                         <td colSpan={5} className="px-6 py-3">
-                          <p className="text-xs font-bold uppercase tracking-wider text-foreground">
+                          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "#0F172A" }}>
                             {section.title}
                           </p>
                           {section.subtitle && (
@@ -366,10 +366,8 @@ function ComparePage() {
                       {section.rows.map((row, i) => (
                         <tr
                           key={`${section.title}-${row.label}`}
-                          className={cn(
-                            "border-t border-border/40",
-                            i % 2 === 1 && "bg-muted/10",
-                          )}
+                          className="border-t border-border/40"
+                          style={i % 2 === 1 ? { backgroundColor: "#F9FAFB" } : undefined}
                         >
                           <td className="px-6 py-3 text-sm text-foreground/90">
                             {row.label}
