@@ -149,7 +149,7 @@ function PricingPage() {
   const activeOption = billingOptions.find((o) => o.id === cycle) ?? billingOptions[0];
   const activeMultiplier = activeOption.multiplier;
   const isMonthly = cycle === "monthly";
-  const savingsPct = Math.round((1 - activeMultiplier) * 100);
+  
 
   return (
     <div className="min-h-screen bg-background text-foreground">
