@@ -26,12 +26,29 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
-type BillingCycle = "18month" | "monthly";
+type BillingCycle = "monthly" | "annual" | "18month" | "18month3pay";
 
-// 18-month is the base price. Monthly adds a 15% premium.
-const billingOptions: { id: BillingCycle; label: string; multiplier: number }[] = [
-  { id: "18month", label: "Plan Length", multiplier: 1 },
-  { id: "monthly", label: "Monthly (+15%)", multiplier: 1.15 },
+// Monthly is the reference price. Annual saves 10%, 18-month options save 20%.
+const billingOptions: {
+  id: BillingCycle;
+  label: string;
+  multiplier: number;
+  note?: string;
+}[] = [
+  { id: "monthly", label: "Monthly", multiplier: 1 },
+  { id: "annual", label: "Annual — save 10%", multiplier: 0.9 },
+  {
+    id: "18month",
+    label: "18-Month — save 20%",
+    multiplier: 0.8,
+    note: "Full contract paid upfront. Best value.",
+  },
+  {
+    id: "18month3pay",
+    label: "18-Month 3-Pay — save 20%",
+    multiplier: 0.8,
+    note: "Full contract paid in 3 equal monthly installments. 18-month commitment applies.",
+  },
 ];
 
 type Plan = {
@@ -145,10 +162,11 @@ function formatPrice(base: number, multiplier: number) {
 }
 
 function PricingPage() {
-  const [cycle, setCycle] = useState<BillingCycle>("18month");
-  const activeMultiplier =
-    billingOptions.find((o) => o.id === cycle)?.multiplier ?? 1;
+  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+  const activeOption = billingOptions.find((o) => o.id === cycle) ?? billingOptions[0];
+  const activeMultiplier = activeOption.multiplier;
   const isMonthly = cycle === "monthly";
+  const savingsPct = Math.round((1 - activeMultiplier) * 100);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -203,6 +221,11 @@ function PricingPage() {
                   );
                 })}
               </div>
+              {activeOption.note && (
+                <p className="mx-auto mt-3 max-w-md text-xs text-muted-foreground">
+                  {activeOption.note}
+                </p>
+              )}
             </div>
           </div>
         </section>
@@ -237,18 +260,24 @@ function PricingPage() {
                   </div>
                   {isMonthly ? (
                     <p className="mt-1 text-xs text-muted-foreground">
-                      <span className="line-through">${plan.basePrice}{plan.priceUnit}</span>{" "}
-                      <span className="font-medium text-foreground">
-                        on standard plan length
-                      </span>
+                      Billed monthly
                     </p>
                   ) : (
                     <p className="mt-1 text-xs text-primary font-medium">
-                      Save 15% vs monthly
+                      <span className="text-muted-foreground line-through mr-1">
+                        ${plan.basePrice}{plan.priceUnit}
+                      </span>
+                      Save {savingsPct}% vs monthly
                     </p>
                   )}
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {isMonthly ? "Month-to-month — cancel anytime" : plan.contractNote}
+                    {cycle === "monthly"
+                      ? "Month-to-month — cancel anytime"
+                      : cycle === "annual"
+                      ? "12-month plan length"
+                      : cycle === "18month"
+                      ? "18-month plan length — paid upfront"
+                      : "18-month plan length — 3 equal installments"}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
                 </header>
