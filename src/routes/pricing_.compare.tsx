@@ -12,7 +12,7 @@ import { MarketingHeader } from "@/components/MarketingHeader";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/pricing/compare")({
+export const Route = createFileRoute("/pricing_/compare")({
   head: () => ({
     meta: [
       { title: "Compare All Plans — TruckDispatchAI" },

@@ -22,7 +22,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrackTokenRouteImport } from './routes/track.$token'
-import { Route as PricingCompareRouteImport } from './routes/pricing.compare'
+import { Route as PricingCompareRouteImport } from './routes/pricing_.compare'
 import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
 
 const TripsRoute = TripsRouteImport.update({
@@ -91,9 +91,9 @@ const TrackTokenRoute = TrackTokenRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingCompareRoute = PricingCompareRouteImport.update({
-  id: '/compare',
-  path: '/compare',
-  getParentRoute: () => PricingRoute,
+  id: '/pricing_/compare',
+  path: '/pricing/compare',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHooksSendRemindersRoute =
   ApiPublicHooksSendRemindersRouteImport.update({
@@ -110,7 +110,7 @@ export interface FileRoutesByFullPath {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
-  '/pricing': typeof PricingRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
@@ -127,7 +127,7 @@ export interface FileRoutesByTo {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
-  '/pricing': typeof PricingRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
@@ -145,12 +145,12 @@ export interface FileRoutesById {
   '/dispatch': typeof DispatchRoute
   '/driver': typeof DriverRoute
   '/maintenance': typeof MaintenanceRoute
-  '/pricing': typeof PricingRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/reports': typeof ReportsRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/trips': typeof TripsRoute
-  '/pricing/compare': typeof PricingCompareRoute
+  '/pricing_/compare': typeof PricingCompareRoute
   '/track/$token': typeof TrackTokenRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
 }
@@ -203,7 +203,7 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/settings'
     | '/trips'
-    | '/pricing/compare'
+    | '/pricing_/compare'
     | '/track/$token'
     | '/api/public/hooks/send-reminders'
   fileRoutesById: FileRoutesById
@@ -216,11 +216,12 @@ export interface RootRouteChildren {
   DispatchRoute: typeof DispatchRoute
   DriverRoute: typeof DriverRoute
   MaintenanceRoute: typeof MaintenanceRoute
-  PricingRoute: typeof PricingRouteWithChildren
+  PricingRoute: typeof PricingRoute
   ReportsRoute: typeof ReportsRoute
   ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
   TripsRoute: typeof TripsRoute
+  PricingCompareRoute: typeof PricingCompareRoute
   TrackTokenRoute: typeof TrackTokenRoute
   ApiPublicHooksSendRemindersRoute: typeof ApiPublicHooksSendRemindersRoute
 }
@@ -318,12 +319,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pricing/compare': {
-      id: '/pricing/compare'
-      path: '/compare'
+    '/pricing_/compare': {
+      id: '/pricing_/compare'
+      path: '/pricing/compare'
       fullPath: '/pricing/compare'
       preLoaderRoute: typeof PricingCompareRouteImport
-      parentRoute: typeof PricingRoute
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/send-reminders': {
       id: '/api/public/hooks/send-reminders'
@@ -335,17 +336,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface PricingRouteChildren {
-  PricingCompareRoute: typeof PricingCompareRoute
-}
-
-const PricingRouteChildren: PricingRouteChildren = {
-  PricingCompareRoute: PricingCompareRoute,
-}
-
-const PricingRouteWithChildren =
-  PricingRoute._addFileChildren(PricingRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
@@ -354,11 +344,12 @@ const rootRouteChildren: RootRouteChildren = {
   DispatchRoute: DispatchRoute,
   DriverRoute: DriverRoute,
   MaintenanceRoute: MaintenanceRoute,
-  PricingRoute: PricingRouteWithChildren,
+  PricingRoute: PricingRoute,
   ReportsRoute: ReportsRoute,
   ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
   TripsRoute: TripsRoute,
+  PricingCompareRoute: PricingCompareRoute,
   TrackTokenRoute: TrackTokenRoute,
   ApiPublicHooksSendRemindersRoute: ApiPublicHooksSendRemindersRoute,
 }
