@@ -26,12 +26,29 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
-type BillingCycle = "18month" | "monthly";
+type BillingCycle = "monthly" | "annual" | "18month" | "18month3pay";
 
-// 18-month is the base price. Monthly adds a 15% premium.
-const billingOptions: { id: BillingCycle; label: string; multiplier: number }[] = [
-  { id: "18month", label: "Plan Length", multiplier: 1 },
-  { id: "monthly", label: "Monthly (+15%)", multiplier: 1.15 },
+// Monthly is the reference price. Annual saves 10%, 18-month options save 20%.
+const billingOptions: {
+  id: BillingCycle;
+  label: string;
+  multiplier: number;
+  note?: string;
+}[] = [
+  { id: "monthly", label: "Monthly", multiplier: 1 },
+  { id: "annual", label: "Annual — save 10%", multiplier: 0.9 },
+  {
+    id: "18month",
+    label: "18-Month — save 20%",
+    multiplier: 0.8,
+    note: "Full contract paid upfront. Best value.",
+  },
+  {
+    id: "18month3pay",
+    label: "18-Month 3-Pay — save 20%",
+    multiplier: 0.8,
+    note: "Full contract paid in 3 equal monthly installments. 18-month commitment applies.",
+  },
 ];
 
 type Plan = {
