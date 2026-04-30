@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, ShieldCheck, Clock, Wallet, Package } from "lucide-react";
+import { Check, ShieldCheck, Clock, Wallet, Package, CalendarDays, CreditCard, BadgeCheck } from "lucide-react";
 import { MarketingHeader } from "@/components/MarketingHeader";
 import { Button } from "@/components/ui/button";
 import { CTA } from "@/components/landing/CTA";
