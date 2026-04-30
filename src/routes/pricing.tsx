@@ -283,13 +283,19 @@ function PricingPage() {
             ))}
           </div>
 
-          <ul className="mx-auto mt-10 max-w-3xl space-y-2 text-center text-xs text-muted-foreground sm:text-sm">
-            <li>• 18-month commitment — half of Samsara's 36 months</li>
-            <li>
-              • Pay upfront in 1 payment or split into 3 equal monthly
-              installments — same 20% discount either way
+          <ul className="mx-auto mt-10 max-w-3xl space-y-3 text-base font-bold text-[#0F172A] sm:text-lg">
+            <li className="flex items-start justify-center gap-3">
+              <CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
+              <span>18-month commitment — half of Samsara's 36 months</span>
             </li>
-            <li>• 30-day money-back guarantee from your AI activation date</li>
+            <li className="flex items-start justify-center gap-3">
+              <CreditCard className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
+              <span>Pay upfront in 1 payment or split into 3 equal monthly installments — same 20% discount either way</span>
+            </li>
+            <li className="flex items-start justify-center gap-3">
+              <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
+              <span>30-day money-back guarantee from your AI activation date</span>
+            </li>
           </ul>
 
           <div className="mt-8 text-center">
