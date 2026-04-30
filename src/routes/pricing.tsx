@@ -204,6 +204,10 @@ function PricingPage() {
                   );
                 })}
               </div>
+
+              <p className="mx-auto mt-5 max-w-2xl text-base font-bold text-[#0F172A] sm:text-lg">
+                Save 20% with our 18-Month Plan — pay in 1 payment or 3 equal monthly installments.
+              </p>
             </div>
           </div>
         </section>
