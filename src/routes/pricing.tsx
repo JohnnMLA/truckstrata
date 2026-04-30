@@ -308,12 +308,14 @@ function PricingPage() {
             ))}
           </div>
 
-          <div className="mt-8 text-center">
+          <div className="mt-8 flex justify-center">
             <Link
               to="/pricing/compare"
-              className="text-sm font-medium text-primary hover:underline"
+              className="inline-flex items-center gap-2 rounded-full border-2 bg-white px-7 py-3 text-base font-semibold transition-colors hover:bg-[#0F172A] hover:text-white"
+              style={{ borderColor: "#0F172A", color: "#0F172A" }}
             >
-              Compare all features in detail →
+              Compare all features in detail
+              <span aria-hidden>→</span>
             </Link>
           </div>
         </section>
