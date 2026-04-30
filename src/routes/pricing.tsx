@@ -205,18 +205,13 @@ function PricingPage() {
                 })}
               </div>
 
-              <div className="mx-auto mt-8 max-w-2xl">
-                <div
-                  className="inline-block rounded-full px-6 py-3 shadow-md"
+              <div className="mx-auto mt-6 flex justify-center">
+                <span
+                  className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white"
                   style={{ backgroundColor: "#16A34A" }}
                 >
-                  <span className="text-xl font-extrabold uppercase tracking-wider text-white sm:text-2xl">
-                    Save 20% with our 18-Month Plan
-                  </span>
-                </div>
-                <p className="mt-3 text-sm font-normal text-[#0F172A] sm:text-base">
-                  Pay in 1 payment or split into 3 equal monthly installments — same 20% discount either way.
-                </p>
+                  Save 20% with our 18-Month Plan
+                </span>
               </div>
             </div>
           </div>
@@ -243,7 +238,10 @@ function PricingPage() {
                   <div className="flex items-center justify-between gap-2">
                     <h2 className="text-lg font-semibold">{plan.name}</h2>
                     {!isMonthly && (
-                      <span className="rounded-full bg-[#16A34A] px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-sm">
+                      <span
+                        className="inline-flex h-6 items-center rounded-full px-2.5 text-[11px] font-semibold uppercase tracking-wide text-white"
+                        style={{ backgroundColor: "#16A34A" }}
+                      >
                         Save 20%
                       </span>
                     )}
@@ -293,7 +291,7 @@ function PricingPage() {
             ))}
           </div>
 
-          <div className="mt-10 space-y-3">
+          <div className="mt-10 space-y-2">
             {[
               { Icon: CalendarDays, text: "18-month commitment — half of Samsara's 36 months" },
               { Icon: CreditCard, text: "Pay upfront in 1 payment or split into 3 equal monthly installments — same 20% discount either way" },
@@ -301,11 +299,11 @@ function PricingPage() {
             ].map(({ Icon, text }) => (
               <div
                 key={text}
-                className="flex w-full items-center gap-4 rounded-2xl px-6 py-4 shadow-md"
-                style={{ backgroundColor: "#16A34A" }}
+                className="flex w-full items-center gap-3 rounded-lg border-l-2 px-4 py-3"
+                style={{ backgroundColor: "#F0FDF4", borderLeftColor: "#16A34A" }}
               >
-                <Icon className="h-6 w-6 shrink-0 text-white" />
-                <span className="text-base font-bold text-white sm:text-lg">{text}</span>
+                <Icon className="h-4 w-4 shrink-0" style={{ color: "#15803D" }} />
+                <span className="text-sm font-medium" style={{ color: "#15803D" }}>{text}</span>
               </div>
             ))}
           </div>
