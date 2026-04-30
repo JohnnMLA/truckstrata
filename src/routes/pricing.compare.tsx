@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Check,
@@ -349,8 +350,8 @@ function ComparePage() {
                 </thead>
                 <tbody>
                   {sections.map((section) => (
-                    <>
-                      <tr key={`hdr-${section.title}`} className="bg-muted/20">
+                    <Fragment key={section.title}>
+                      <tr className="bg-muted/20">
                         <td colSpan={5} className="px-6 py-3">
                           <p className="text-xs font-bold uppercase tracking-wider text-foreground">
                             {section.title}
