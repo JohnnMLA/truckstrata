@@ -24,7 +24,7 @@ export function CTA() {
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link to="/auth">
-            <Button size="lg" className="rounded-full px-8">Start free trial</Button>
+            <Button size="lg" className="rounded-full px-8">Get started</Button>
           </Link>
           <a href="mailto:hello@truckdispatchai.com?subject=TruckDispatchAI%20demo%20request">
             <Button size="lg" variant="outline" className="rounded-full px-8">
@@ -34,7 +34,7 @@ export function CTA() {
         </div>
         <p className="mt-6 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
           <ShieldCheck className="h-3.5 w-3.5" />
-          No credit card · Cancel anytime · Your data stays yours
+          30-day money-back guarantee from AI activation date · Your data stays yours
         </p>
       </div>
       <div className="mt-12 flex flex-col items-center gap-4">
