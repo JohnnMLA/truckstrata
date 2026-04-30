@@ -229,25 +229,26 @@ function PricingPage() {
                   <p className="mt-1 text-xs text-muted-foreground">{plan.range}</p>
                   <div className="mt-5 flex items-baseline gap-1">
                     <span className="text-4xl font-semibold tracking-tight tabular-nums">
-                      {formatPrice(plan.basePrice, activeDiscount)}
+                      {formatPrice(plan.basePrice, activeMultiplier)}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       {plan.priceUnit}
                     </span>
                   </div>
-                  {activeDiscount > 0 && (
+                  {isMonthly ? (
                     <p className="mt-1 text-xs text-muted-foreground">
-                      <span className="line-through">
-                        ${plan.basePrice}
-                        {plan.priceUnit}
-                      </span>{" "}
-                      <span className="font-medium text-primary">
-                        save {Math.round(activeDiscount * 100)}%
+                      <span className="line-through">${plan.basePrice}{plan.priceUnit}</span>{" "}
+                      <span className="font-medium text-foreground">
+                        on 18-month plan
                       </span>
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-xs text-primary font-medium">
+                      Save 15% vs monthly
                     </p>
                   )}
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {plan.contractNote}
+                    {isMonthly ? "Month-to-month — cancel anytime" : plan.contractNote}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
                 </header>
