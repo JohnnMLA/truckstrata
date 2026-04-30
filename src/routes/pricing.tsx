@@ -205,9 +205,19 @@ function PricingPage() {
                 })}
               </div>
 
-              <p className="mx-auto mt-5 max-w-2xl text-base font-bold text-[#0F172A] sm:text-lg">
-                Save 20% with our 18-Month Plan — pay in 1 payment or 3 equal monthly installments.
-              </p>
+              <div className="mx-auto mt-8 max-w-2xl">
+                <div
+                  className="inline-block rounded-full px-6 py-3 shadow-md"
+                  style={{ backgroundColor: "#16A34A" }}
+                >
+                  <span className="text-xl font-extrabold uppercase tracking-wider text-white sm:text-2xl">
+                    Save 20% with our 18-Month Plan
+                  </span>
+                </div>
+                <p className="mt-3 text-sm font-normal text-[#0F172A] sm:text-base">
+                  Pay in 1 payment or split into 3 equal monthly installments — same 20% discount either way.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -283,20 +293,22 @@ function PricingPage() {
             ))}
           </div>
 
-          <ul className="mx-auto mt-10 max-w-3xl space-y-3 text-base font-bold text-[#0F172A] sm:text-lg">
-            <li className="flex items-start justify-center gap-3">
-              <CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
-              <span>18-month commitment — half of Samsara's 36 months</span>
-            </li>
-            <li className="flex items-start justify-center gap-3">
-              <CreditCard className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
-              <span>Pay upfront in 1 payment or split into 3 equal monthly installments — same 20% discount either way</span>
-            </li>
-            <li className="flex items-start justify-center gap-3">
-              <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
-              <span>30-day money-back guarantee from your AI activation date</span>
-            </li>
-          </ul>
+          <div className="mt-10 space-y-3">
+            {[
+              { Icon: CalendarDays, text: "18-month commitment — half of Samsara's 36 months" },
+              { Icon: CreditCard, text: "Pay upfront in 1 payment or split into 3 equal monthly installments — same 20% discount either way" },
+              { Icon: BadgeCheck, text: "30-day money-back guarantee from your AI activation date — no risk to try us" },
+            ].map(({ Icon, text }) => (
+              <div
+                key={text}
+                className="flex w-full items-center gap-4 rounded-2xl px-6 py-4 shadow-md"
+                style={{ backgroundColor: "#16A34A" }}
+              >
+                <Icon className="h-6 w-6 shrink-0 text-white" />
+                <span className="text-base font-bold text-white sm:text-lg">{text}</span>
+              </div>
+            ))}
+          </div>
 
           <div className="mt-8 text-center">
             <Link
