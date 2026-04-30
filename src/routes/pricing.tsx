@@ -204,11 +204,6 @@ function PricingPage() {
                   );
                 })}
               </div>
-              {activeOption.note && (
-                <p className="mx-auto mt-3 max-w-md text-xs text-muted-foreground">
-                  {activeOption.note}
-                </p>
-              )}
             </div>
           </div>
         </section>
