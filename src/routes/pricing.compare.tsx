@@ -8,7 +8,7 @@ export const Route = createFileRoute("/pricing/compare")({
       {
         name: "description",
         content:
-          "Detailed feature-by-feature comparison of TruckDispatchAI plans: Starter Solo, Fleet Core, Fleet Pro, and Fleet Enterprise.",
+          "Detailed feature-by-feature comparison of TruckDispatchAI plans: Owner-Operator, Fleet Core, Fleet Pro, and Fleet Enterprise.",
       },
       { property: "og:title", content: "Compare Plans — TruckDispatchAI" },
       {
@@ -122,7 +122,7 @@ const sections: { title: string; rows: Row[] }[] = [
   },
 ];
 
-const planNames = ["Starter Solo", "Fleet Core", "Fleet Pro", "Fleet Enterprise"];
+const planNames = ["Owner-Operator", "Fleet Core", "Fleet Pro", "Fleet Enterprise"];
 
 function ComparePage() {
   return (

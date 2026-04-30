@@ -13,7 +13,7 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Transparent per-truck pricing for TruckDispatchAI. Starter Solo, Fleet Core, Fleet Pro, and Fleet Enterprise — half the cost of Samsara.",
+          "Transparent per-truck pricing for TruckDispatchAI. Owner-Operator, Fleet Core, Fleet Pro, and Fleet Enterprise — half the cost of Samsara.",
       },
       { property: "og:title", content: "Pricing — TruckDispatchAI" },
       {
@@ -49,11 +49,11 @@ type Plan = {
 
 const plans: Plan[] = [
   {
-    name: "Starter Solo",
+    name: "Owner-Operator",
     basePrice: 25,
     priceUnit: "/mo",
     range: "1 truck",
-    contractNote: "18-month plan length",
+    contractNote: "Standard plan length",
     setup: "Setup fee $99",
     features: [
       "GPS tracking",
@@ -62,14 +62,14 @@ const plans: Plan[] = [
       "Mobile driver app",
       "No AI agents",
     ],
-    cta: "Start with Solo",
+    cta: "Start as Owner-Operator",
   },
   {
     name: "Fleet Core",
     basePrice: 35,
     priceUnit: "/truck/mo",
     range: "2–15 trucks",
-    contractNote: "18-month plan length",
+    contractNote: "Standard plan length",
     setup: "Setup fee from $299",
     highlight: true,
     badge: "Most popular",
@@ -87,7 +87,7 @@ const plans: Plan[] = [
     basePrice: 49,
     priceUnit: "/truck/mo",
     range: "16–75 trucks",
-    contractNote: "18-month plan length",
+    contractNote: "Standard plan length",
     setup: "Setup fee from $799",
     features: [
       "Everything in Fleet Core",
@@ -103,7 +103,7 @@ const plans: Plan[] = [
     basePrice: 69,
     priceUnit: "/truck/mo",
     range: "76–500 trucks",
-    contractNote: "18-month plan length",
+    contractNote: "Standard plan length",
     setup: "Setup fee from $2,500",
     features: [
       "Everything in Fleet Pro",
@@ -119,7 +119,7 @@ const plans: Plan[] = [
 const trustItems = [
   {
     icon: Clock,
-    title: "18-month plan length",
+    title: "Standard plan length",
     body: "Half of Samsara's 36-month standard.",
   },
   {
@@ -239,7 +239,7 @@ function PricingPage() {
                     <p className="mt-1 text-xs text-muted-foreground">
                       <span className="line-through">${plan.basePrice}{plan.priceUnit}</span>{" "}
                       <span className="font-medium text-foreground">
-                        on 18-month plan
+                        on standard plan length
                       </span>
                     </p>
                   ) : (
