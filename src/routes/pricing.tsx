@@ -26,29 +26,12 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
-type BillingCycle = "monthly" | "annual" | "18month" | "18month3pay";
+type BillingCycle = "18month" | "monthly";
 
-// Monthly is the reference price. Annual saves 10%, 18-month options save 20%.
-const billingOptions: {
-  id: BillingCycle;
-  label: string;
-  multiplier: number;
-  note?: string;
-}[] = [
+// Monthly is the reference price. 18-month plan saves 20%.
+const billingOptions: { id: BillingCycle; label: string; multiplier: number }[] = [
+  { id: "18month", label: "18-Month Plan", multiplier: 0.8 },
   { id: "monthly", label: "Monthly", multiplier: 1 },
-  { id: "annual", label: "Annual — save 10%", multiplier: 0.9 },
-  {
-    id: "18month",
-    label: "18-Month — save 20%",
-    multiplier: 0.8,
-    note: "Full contract paid upfront. Best value.",
-  },
-  {
-    id: "18month3pay",
-    label: "18-Month 3-Pay — save 20%",
-    multiplier: 0.8,
-    note: "Full contract paid in 3 equal monthly installments. 18-month commitment applies.",
-  },
 ];
 
 type Plan = {
@@ -162,11 +145,11 @@ function formatPrice(base: number, multiplier: number) {
 }
 
 function PricingPage() {
-  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+  const [cycle, setCycle] = useState<BillingCycle>("18month");
   const activeOption = billingOptions.find((o) => o.id === cycle) ?? billingOptions[0];
   const activeMultiplier = activeOption.multiplier;
   const isMonthly = cycle === "monthly";
-  const savingsPct = Math.round((1 - activeMultiplier) * 100);
+  
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -221,11 +204,6 @@ function PricingPage() {
                   );
                 })}
               </div>
-              {activeOption.note && (
-                <p className="mx-auto mt-3 max-w-md text-xs text-muted-foreground">
-                  {activeOption.note}
-                </p>
-              )}
             </div>
           </div>
         </section>
@@ -248,36 +226,30 @@ function PricingPage() {
                   </span>
                 )}
                 <header>
-                  <h2 className="text-lg font-semibold">{plan.name}</h2>
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="text-lg font-semibold">{plan.name}</h2>
+                    {!isMonthly && (
+                      <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-success">
+                        Save 20%
+                      </span>
+                    )}
+                  </div>
                   <p className="mt-1 text-xs text-muted-foreground">{plan.range}</p>
-                  <div className="mt-5 flex items-baseline gap-1">
+                  <div className="mt-5 flex items-baseline gap-2">
                     <span className="text-4xl font-semibold tracking-tight tabular-nums">
                       {formatPrice(plan.basePrice, activeMultiplier)}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       {plan.priceUnit}
                     </span>
-                  </div>
-                  {isMonthly ? (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Billed monthly
-                    </p>
-                  ) : (
-                    <p className="mt-1 text-xs text-primary font-medium">
-                      <span className="text-muted-foreground line-through mr-1">
+                    {!isMonthly && (
+                      <span className="text-sm text-muted-foreground line-through">
                         ${plan.basePrice}{plan.priceUnit}
                       </span>
-                      Save {savingsPct}% vs monthly
-                    </p>
-                  )}
+                    )}
+                  </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {cycle === "monthly"
-                      ? "Month-to-month — cancel anytime"
-                      : cycle === "annual"
-                      ? "12-month plan length"
-                      : cycle === "18month"
-                      ? "18-month plan length — paid upfront"
-                      : "18-month plan length — 3 equal installments"}
+                    18-month contract
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
                 </header>
@@ -306,6 +278,15 @@ function PricingPage() {
               </article>
             ))}
           </div>
+
+          <ul className="mx-auto mt-10 max-w-3xl space-y-2 text-center text-xs text-muted-foreground sm:text-sm">
+            <li>• 18-month commitment — half of Samsara's 36 months</li>
+            <li>
+              • Pay upfront in 1 payment or split into 3 equal monthly
+              installments — same 20% discount either way
+            </li>
+            <li>• 30-day money-back guarantee from your AI activation date</li>
+          </ul>
 
           <div className="mt-8 text-center">
             <Link
