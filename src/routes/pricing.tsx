@@ -145,7 +145,7 @@ function formatPrice(base: number, multiplier: number) {
 }
 
 function PricingPage() {
-  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+  const [cycle, setCycle] = useState<BillingCycle>("18month");
   const activeOption = billingOptions.find((o) => o.id === cycle) ?? billingOptions[0];
   const activeMultiplier = activeOption.multiplier;
   const isMonthly = cycle === "monthly";
