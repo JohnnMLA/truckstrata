@@ -316,10 +316,10 @@ function PricingPage() {
                   <item.icon className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-base font-bold text-foreground sm:text-lg">
                     {item.title}
                   </p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  <p className="mt-1 text-sm leading-relaxed text-foreground/80">
                     {item.body}
                   </p>
                 </div>
