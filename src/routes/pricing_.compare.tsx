@@ -351,9 +351,9 @@ function ComparePage() {
                 <tbody>
                   {sections.map((section) => (
                     <Fragment key={section.title}>
-                      <tr className="bg-muted/20">
+                      <tr style={{ backgroundColor: "#F1F5F9" }}>
                         <td colSpan={5} className="px-6 py-3">
-                          <p className="text-xs font-bold uppercase tracking-wider text-foreground">
+                          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "#0F172A" }}>
                             {section.title}
                           </p>
                           {section.subtitle && (
@@ -366,10 +366,8 @@ function ComparePage() {
                       {section.rows.map((row, i) => (
                         <tr
                           key={`${section.title}-${row.label}`}
-                          className={cn(
-                            "border-t border-border/40",
-                            i % 2 === 1 && "bg-muted/10",
-                          )}
+                          className="border-t border-border/40"
+                          style={i % 2 === 1 ? { backgroundColor: "#F9FAFB" } : undefined}
                         >
                           <td className="px-6 py-3 text-sm text-foreground/90">
                             {row.label}
@@ -403,64 +401,62 @@ function ComparePage() {
                 <thead>
                   <tr className="bg-muted/40">
                     <th className="w-[22%] px-5 py-4 text-sm font-semibold text-foreground"></th>
-                    <th className="px-3 py-4 text-center text-sm font-semibold text-foreground">
-                      Samsara
-                    </th>
-                    <th className="px-3 py-4 text-center text-sm font-semibold text-foreground">
-                      Motive
-                    </th>
-                    <th className="px-3 py-4 text-center text-sm font-semibold text-foreground">
-                      Verizon Connect
-                    </th>
-                    <th className="px-3 py-4 text-center text-sm font-semibold text-foreground">
-                      Geotab
-                    </th>
-                    <th className="px-3 py-4 text-center text-sm font-semibold text-foreground">
-                      Azuga
-                    </th>
                     <th
-                      className="px-3 py-4 text-center text-sm font-bold text-primary"
-                      style={{ backgroundColor: "#EFF6FF" }}
+                      className="px-3 py-4 text-center text-sm font-bold"
+                      style={{ backgroundColor: "#F0FDF4", color: "#16A34A" }}
                     >
                       TruckDispatchAI
+                    </th>
+                    <th className="px-3 py-4 text-center text-sm font-semibold" style={{ color: "#6B7280" }}>
+                      Samsara
+                    </th>
+                    <th className="px-3 py-4 text-center text-sm font-semibold" style={{ color: "#6B7280" }}>
+                      Motive
+                    </th>
+                    <th className="px-3 py-4 text-center text-sm font-semibold" style={{ color: "#6B7280" }}>
+                      Verizon Connect
+                    </th>
+                    <th className="px-3 py-4 text-center text-sm font-semibold" style={{ color: "#6B7280" }}>
+                      Geotab
+                    </th>
+                    <th className="px-3 py-4 text-center text-sm font-semibold" style={{ color: "#6B7280" }}>
+                      Azuga
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {competitorRows.map((row, i) => (
+                  {competitorRows.map((row) => (
                     <tr
                       key={row.label}
-                      className={cn(
-                        "border-t border-border/40",
-                        i % 2 === 1 && "bg-muted/10",
-                      )}
+                      className="border-t border-border/40"
+                      style={row.truck.bold ? { backgroundColor: "#F0FDF4" } : undefined}
                     >
                       <td className="px-5 py-3 text-sm font-medium text-foreground">
                         {row.label}
                       </td>
-                      <td className="px-3 py-3 text-center text-sm text-foreground/80">
-                        {row.samsara}
-                      </td>
-                      <td className="px-3 py-3 text-center text-sm text-foreground/80">
-                        {row.motive}
-                      </td>
-                      <td className="px-3 py-3 text-center text-sm text-foreground/80">
-                        {row.verizon}
-                      </td>
-                      <td className="px-3 py-3 text-center text-sm text-foreground/80">
-                        {row.geotab}
-                      </td>
-                      <td className="px-3 py-3 text-center text-sm text-foreground/80">
-                        {row.azuga}
-                      </td>
                       <td
                         className={cn(
                           "px-3 py-3 text-center text-sm",
-                          row.truck.bold ? "font-bold text-primary" : "text-foreground",
+                          row.truck.bold ? "font-bold" : "",
                         )}
-                        style={{ backgroundColor: "#EFF6FF" }}
+                        style={{ backgroundColor: "#F0FDF4", color: "#16A34A" }}
                       >
                         {row.truck.text}
+                      </td>
+                      <td className="px-3 py-3 text-center text-sm" style={{ color: "#6B7280" }}>
+                        {row.samsara}
+                      </td>
+                      <td className="px-3 py-3 text-center text-sm" style={{ color: "#6B7280" }}>
+                        {row.motive}
+                      </td>
+                      <td className="px-3 py-3 text-center text-sm" style={{ color: "#6B7280" }}>
+                        {row.verizon}
+                      </td>
+                      <td className="px-3 py-3 text-center text-sm" style={{ color: "#6B7280" }}>
+                        {row.geotab}
+                      </td>
+                      <td className="px-3 py-3 text-center text-sm" style={{ color: "#6B7280" }}>
+                        {row.azuga}
                       </td>
                     </tr>
                   ))}
