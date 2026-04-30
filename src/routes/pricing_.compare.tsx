@@ -503,19 +503,23 @@ function ComparePage() {
                 <article
                   key={title}
                   className="flex flex-col rounded-2xl p-6 shadow-lg"
-                  style={{ backgroundColor: "#1E3A5F" }}
+                  style={{
+                    backgroundColor: "#1E3A5F",
+                    borderTop: "3px solid #16A34A",
+                    borderLeft: "3px solid #16A34A",
+                  }}
                 >
                   <span className="grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-white">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <h3 className="mt-4 text-lg font-bold text-white">{title}</h3>
+                  <h3 className="mt-4 text-xl font-extrabold text-white sm:text-2xl">{title}</h3>
                   <p className="mt-3 flex-1 text-sm leading-relaxed text-white/80">
                     {body}
                   </p>
                   <a href="mailto:hello@truckdispatchai.com?subject=Switch%20Program" className="mt-6">
                     <Button
-                      className="w-full rounded-full font-semibold text-white"
-                      style={{ backgroundColor: "#2563EB" }}
+                      className="w-full rounded-full font-semibold text-white hover:opacity-90"
+                      style={{ backgroundColor: "#16A34A" }}
                     >
                       {cta}
                     </Button>
