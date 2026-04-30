@@ -226,36 +226,30 @@ function PricingPage() {
                   </span>
                 )}
                 <header>
-                  <h2 className="text-lg font-semibold">{plan.name}</h2>
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="text-lg font-semibold">{plan.name}</h2>
+                    {!isMonthly && (
+                      <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-success">
+                        Save 20%
+                      </span>
+                    )}
+                  </div>
                   <p className="mt-1 text-xs text-muted-foreground">{plan.range}</p>
-                  <div className="mt-5 flex items-baseline gap-1">
+                  <div className="mt-5 flex items-baseline gap-2">
                     <span className="text-4xl font-semibold tracking-tight tabular-nums">
                       {formatPrice(plan.basePrice, activeMultiplier)}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       {plan.priceUnit}
                     </span>
-                  </div>
-                  {isMonthly ? (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Billed monthly
-                    </p>
-                  ) : (
-                    <p className="mt-1 text-xs text-primary font-medium">
-                      <span className="text-muted-foreground line-through mr-1">
+                    {!isMonthly && (
+                      <span className="text-sm text-muted-foreground line-through">
                         ${plan.basePrice}{plan.priceUnit}
                       </span>
-                      Save {savingsPct}% vs monthly
-                    </p>
-                  )}
+                    )}
+                  </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {cycle === "monthly"
-                      ? "Month-to-month — cancel anytime"
-                      : cycle === "annual"
-                      ? "12-month plan length"
-                      : cycle === "18month"
-                      ? "18-month plan length — paid upfront"
-                      : "18-month plan length — 3 equal installments"}
+                    18-month contract
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">{plan.setup}</p>
                 </header>
