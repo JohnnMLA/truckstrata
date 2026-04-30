@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, ShieldCheck, Clock, Wallet, Package } from "lucide-react";
+import { Check, ShieldCheck, Clock, Wallet, Package, CalendarDays, CreditCard, BadgeCheck } from "lucide-react";
 import { MarketingHeader } from "@/components/MarketingHeader";
 import { Button } from "@/components/ui/button";
 import { CTA } from "@/components/landing/CTA";
@@ -204,6 +204,10 @@ function PricingPage() {
                   );
                 })}
               </div>
+
+              <p className="mx-auto mt-5 max-w-2xl text-base font-bold text-[#0F172A] sm:text-lg">
+                Save 20% with our 18-Month Plan — pay in 1 payment or 3 equal monthly installments.
+              </p>
             </div>
           </div>
         </section>
@@ -229,7 +233,7 @@ function PricingPage() {
                   <div className="flex items-center justify-between gap-2">
                     <h2 className="text-lg font-semibold">{plan.name}</h2>
                     {!isMonthly && (
-                      <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-success">
+                      <span className="rounded-full bg-[#16A34A] px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-sm">
                         Save 20%
                       </span>
                     )}
@@ -279,13 +283,19 @@ function PricingPage() {
             ))}
           </div>
 
-          <ul className="mx-auto mt-10 max-w-3xl space-y-2 text-center text-xs text-muted-foreground sm:text-sm">
-            <li>• 18-month commitment — half of Samsara's 36 months</li>
-            <li>
-              • Pay upfront in 1 payment or split into 3 equal monthly
-              installments — same 20% discount either way
+          <ul className="mx-auto mt-10 max-w-3xl space-y-3 text-base font-bold text-[#0F172A] sm:text-lg">
+            <li className="flex items-start justify-center gap-3">
+              <CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
+              <span>18-month commitment — half of Samsara's 36 months</span>
             </li>
-            <li>• 30-day money-back guarantee from your AI activation date</li>
+            <li className="flex items-start justify-center gap-3">
+              <CreditCard className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
+              <span>Pay upfront in 1 payment or split into 3 equal monthly installments — same 20% discount either way</span>
+            </li>
+            <li className="flex items-start justify-center gap-3">
+              <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#0F172A]" />
+              <span>30-day money-back guarantee from your AI activation date</span>
+            </li>
           </ul>
 
           <div className="mt-8 text-center">
@@ -306,10 +316,10 @@ function PricingPage() {
                   <item.icon className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-base font-bold text-foreground sm:text-lg">
                     {item.title}
                   </p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  <p className="mt-1 text-sm leading-relaxed text-foreground/80">
                     {item.body}
                   </p>
                 </div>
