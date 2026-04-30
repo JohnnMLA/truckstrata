@@ -30,7 +30,7 @@ type BillingCycle = "18month" | "monthly";
 
 // 18-month is the base price. Monthly adds a 15% premium.
 const billingOptions: { id: BillingCycle; label: string; multiplier: number }[] = [
-  { id: "18month", label: "18-Month plan", multiplier: 1 },
+  { id: "18month", label: "Plan Length", multiplier: 1 },
   { id: "monthly", label: "Monthly (+15%)", multiplier: 1.15 },
 ];
 
