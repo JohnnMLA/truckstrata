@@ -22,20 +22,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up listener FIRST, then check existing session.
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      setLoading(false);
-    });
+    let subscription: { unsubscribe: () => void } | undefined;
 
-    supabase.auth.getSession().then(({ data: { session: existing } }) => {
-      setSession(existing);
-      setLoading(false);
-    });
+    try {
+      // Set up listener FIRST, then check existing session.
+      const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
+        setSession(newSession);
+        setLoading(false);
+      });
 
-    return () => subscription.unsubscribe();
+      subscription = data.subscription;
+
+      supabase.auth
+        .getSession()
+        .then(({ data: { session: existing } }) => {
+          setSession(existing);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.warn("Authentication is unavailable in this environment.", error);
+      setLoading(false);
+    }
+
+    return () => subscription?.unsubscribe();
   }, []);
 
   const value: AuthContextValue = {
@@ -43,7 +54,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     loading,
     signOut: async () => {
-      await supabase.auth.signOut();
+      try {
+        await supabase.auth.signOut();
+      } catch (error) {
+        console.warn("Sign out is unavailable in this environment.", error);
+      }
     },
   };
 
