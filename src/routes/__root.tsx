@@ -1,3 +1,4 @@
+// Build bump: rebuild to bake in env vars
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 
